@@ -11,16 +11,45 @@ version 3 or, at your option, any later version.
 """
 
 ## Imports
-from multiprocessing import Pool
+#from multiprocessing import Pool
 import argparse
-import sqlite3
+#import sqlite3
 import ConfigParser
+import sys
+import errno
 
 """
 Main EB Functions
 """
 class EBMain:
-    pass
+    """
+    System-specific Variables
+    """
+    # The location of the configuration files (default: /etc/eb/eb.conf
+    configFileLocation = '../cfg/eb.conf'
+    
+    """
+    A wrapper for configuration file parsing
+    """
+    def parseConfig(self):
+        # Read the configuration file
+        try:
+            config = ConfigParser.SafeConfigParser()
+            config.read(self.configFileLocation)
+        except ConfigParser.Error as e:
+            sys.stdout.write('Error parsing configuration.  Returned: {0}\n'.format(e))
+            sys.stdout.flush()
+            exit(-errno.EIO)
+        
+        # Build the file into a dict that we can use
+        out = {}
+        for section in config.sections():
+            out[section] = {}
+            for option in config.options(section):
+                out[section][option] = config.get(section, option)
+                
+        return out
+        
 
 """
 Threading functions and operations

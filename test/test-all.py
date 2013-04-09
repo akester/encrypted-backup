@@ -18,6 +18,15 @@ class testEBFull(unittest.TestCase):
     ebm = backup.EBMain()
     ebt = backup.EBThreading()
     ebd = backup.EBDatabase()
+    
+    # Test configuration parsing
+    def test_configParsing(self):
+        print 'Checking configuration file parsing...'
+        # Check file locations
+        self.assertEqual(self.ebm.configFileLocation, '../cfg/eb.conf')
+        # Check parsing functions
+        self.assertEqual(self.ebm.parseConfig(), {'main': {'key': 'value'}})
+        
 
 if __name__ == '__main__':
     unittest.main()
