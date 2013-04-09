@@ -19,6 +19,12 @@ class testEBFull(unittest.TestCase):
     ebt = backup.EBThreading()
     ebd = backup.EBDatabase()
     
+    # Test the imports and declarations above
+    def test_imports(self):
+        self.assertIsInstance(self.ebm, backup.EBMain)
+        self.assertIsInstance(self.ebt, backup.EBThreading)
+        self.assertIsInstance(self.ebd, backup.EBDatabase)
+    
     # Test configuration parsing
     def test_configParsing(self):
         # Check file locations
