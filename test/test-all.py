@@ -72,6 +72,24 @@ class testEBFull(unittest.TestCase):
             shutil.rmtree('tmp/directory')
         except:
             self.fail('Could not remove tmp extraction data.')
+            
+    # Check gzip compression
+    def test_gzip(self):
+        self.ebm.compressFile('files/hacking.txt', 'tmp/hacking.txt.gz')
+        try:
+            self.ebm.decompressFile('tmp/hacking.txt.gz', 'tmp/hacking.txt')
+        except:
+            self.fail('Could not decompress archive.')
+        
+        self.assertEqual(self.ebm.getFileHash('tmp/hacking.txt'), '142ed81e48888c141c64e27215d99ce14d52f829',
+                         'Extracted data is not consistent')
+        
+        try:
+            #Clean the files
+            os.remove('tmp/hacking.txt.gz')
+            os.remove('tmp/hacking.txt')
+        except:
+            self.fail('Could not remove tmp extraction data.')
         
 # DO NOT EDIT - This will execute all of the tests above!
 if __name__ == '__main__':

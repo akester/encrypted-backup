@@ -16,6 +16,7 @@ import argparse
 #import sqlite3
 import ConfigParser
 import datetime
+import gzip
 import hashlib
 import os
 import sys
@@ -100,6 +101,23 @@ class EBMain:
                 sha1.update(self.getFileHash(root + '/' + f))
                 
         return sha1.hexdigest()
+    
+    """
+    Compress a file
+    """
+    def compressFile(self, path, outpath):
+        f = gzip.open(outpath, 'wb')
+        f_in = open(path, 'rb')
+        f.writelines(f_in)
+        f.close()
+    
+    """
+    Decompress a file
+    """
+    def decompressFile(self, path, outpath):
+        f = gzip.open(path)
+        f_out = open(outpath, 'w+')
+        f_out.writelines(f.read())
     
 """
 Threading functions and operations
