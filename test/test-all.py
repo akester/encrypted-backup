@@ -64,9 +64,12 @@ class testEBFull(unittest.TestCase):
         self.assertEqual(self.ebm.getDirHash('tmp/directory/10'), '1337b77ae713094ad3d6b99302cd08a46d9fce5f',
                          'Extracted data is not consistent')
             
-        #Clean the files
-        os.remove('tmp/10.tar')
-        shutil.rmtree('tmp/directory')
+        try:
+            #Clean the files
+            os.remove('tmp/10.tar')
+            shutil.rmtree('tmp/directory')
+        except:
+            self.fail('Could not remove tmp extraction data.')
         
 
 if __name__ == '__main__':
