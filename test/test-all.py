@@ -71,6 +71,6 @@ class testEBFull(unittest.TestCase):
         except:
             self.fail('Could not remove tmp extraction data.')
         
-
+# DO NOT EDIT - This will execute all of the tests above!
 if __name__ == '__main__':
     unittest.main()
