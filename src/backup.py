@@ -15,6 +15,9 @@ version 3 or, at your option, any later version.
 import argparse
 #import sqlite3
 import ConfigParser
+import datetime
+import hashlib
+import os
 import sys
 import errno
 
@@ -50,7 +53,38 @@ class EBMain:
                 
         return out
         
-
+    """
+    Extracts a tar archive
+    """        
+    def dearchiveDirectory(self, tar):
+        tar = tarfile.open(tar)
+        tar.extractall('tmp/.')
+        tar.close()
+        
+    """
+    Gets the hash of a file
+    """
+    def getFileHash(self, path):
+        sha1 = hashlib.sha1()
+        f = open(path)
+        try:
+            sha1.update(f.read())
+        finally:
+            f.close()
+        return sha1.hexdigest()
+    
+    """
+    Gets the hash of a directory
+    """
+    def getDirHash(self, path):
+        sha1 = hashlib.sha1()
+        tree = os.walk(path)
+        for root, dirs, files in tree:
+            for f in files:
+                sha1.update(self.getFileHash(root + '/' + f))
+                
+        return sha1.hexdigest()
+    
 """
 Threading functions and operations
 """
