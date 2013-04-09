@@ -63,6 +63,8 @@ class testEBFull(unittest.TestCase):
         # Ensure that we have the same data
         self.assertEqual(self.ebm.getDirHash('tmp/directory/10'), '1337b77ae713094ad3d6b99302cd08a46d9fce5f',
                          'Extracted data is not consistent')
+        self.assertEqual(self.ebm.getFileHash('tmp/10.tar'), 'a9c1612bd14930d794502ce6257ab25a677f0a2b',
+                         'Archive is not consitent.')
             
         try:
             #Clean the files
