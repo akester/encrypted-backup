@@ -21,7 +21,6 @@ class testEBFull(unittest.TestCase):
     
     # Test configuration parsing
     def test_configParsing(self):
-        print 'Checking configuration file parsing...'
         # Check file locations
         self.assertEqual(self.ebm.configFileLocation, '../cfg/eb.conf')
         # Check parsing functions
