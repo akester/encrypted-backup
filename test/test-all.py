@@ -24,7 +24,11 @@ class testEBFull(unittest.TestCase):
         # Check file locations
         self.assertEqual(self.ebm.configFileLocation, '../cfg/eb.conf')
         # Check parsing functions
-        self.assertEqual(self.ebm.parseConfig(), {'main': {'key': 'value'}})
+        # This variable should equal the test config's keys and values.
+        cfgData = {'main': { 'key':'value'
+                            }
+                   }
+        self.assertEqual(self.ebm.parseConfig(), cfgData, 'CFG Data is invalid.')
         
 
 if __name__ == '__main__':
