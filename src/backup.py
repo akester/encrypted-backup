@@ -19,6 +19,7 @@ import datetime
 import hashlib
 import os
 import sys
+import tarfile
 import errno
 
 """
@@ -52,6 +53,21 @@ class EBMain:
                 out[section][option] = config.get(section, option)
                 
         return out
+    
+    """
+    Generates the hash for this snapshot
+    """
+    def generateSnapshotHash(self):
+        datestr = datetime.datetime.today().strftime("%I:%M%p on %B %d, %Y")
+        return hashlib.sha1(datestr).hexdigest()
+    
+    """
+    Archive a directory
+    """
+    def archiveDirectory(self, directory, outfile):
+        tar = tarfile.open(outfile, "w")
+        tar.add(directory)
+        tar.close()
         
     """
     Extracts a tar archive
