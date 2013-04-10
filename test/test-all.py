@@ -42,13 +42,13 @@ class testEBFull(unittest.TestCase):
     def test_fileHashing(self):
         # Hash a file
         self.assertEqual(self.ebm.getFileHash('files/hacking.txt'), '142ed81e48888c141c64e27215d99ce14d52f829',
-                         'Test data is not consistent')
+                         'Test data is not consistent-1')
         # Hash a small directory
-        self.assertEqual(self.ebm.getDirHash('directory/10'), '1337b77ae713094ad3d6b99302cd08a46d9fce5f',
-                         'Test data is not consistent')
+        self.assertEqual(self.ebm.getDirHash('directory/10'), '0fe397ded78dcb2b7514ca0ae1f84c53d50ad6c8',
+                         'Test data is not consistent-2')
         # Hash a larger directory
-        self.assertEqual(self.ebm.getDirHash('directory'), '0dfcc0df20c63b1a010e8a4d14f3208a6f6df32f',
-                         'Test data is not consistent')
+        self.assertEqual(self.ebm.getDirHash('directory'), '55363c7595457d2ef37d9fccf8d2f5b5bcc3d978',
+                         'Test data is not consistent-3')
         
         
     # Check tarball compression
@@ -61,9 +61,9 @@ class testEBFull(unittest.TestCase):
             self.fail('Could not extract tar archive')
             
         # Ensure that we have the same data
-        self.assertEqual(self.ebm.getDirHash('tmp/directory/10'), '1337b77ae713094ad3d6b99302cd08a46d9fce5f',
+        self.assertEqual(self.ebm.getDirHash('tmp/directory/10'), '0fe397ded78dcb2b7514ca0ae1f84c53d50ad6c8',
                          'Extracted data is not consistent')
-        self.assertEqual(self.ebm.getFileHash('tmp/10.tar'), 'a9c1612bd14930d794502ce6257ab25a677f0a2b',
+        self.assertEqual(self.ebm.getFileHash('tmp/10.tar'), 'db35a6f697992283644719667e0b955605d2c383',
                          'Archive is not consitent.')
             
         try:
