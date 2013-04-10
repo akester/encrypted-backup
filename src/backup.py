@@ -129,11 +129,17 @@ class EBThreading:
 Database operations
 """
 class EBDatabase:
+    # Location of the database file we are using.
+    path = None
+    
+    def __init__(self, path):
+        self.path = path
+        
     """
     Create a database to be stored with the backups
     """
-    def initBackupDB(self, path):
-        db = sqlite3.connect(path)
+    def initBackupDB(self):
+        db = sqlite3.connect(self.path)
         c = db.cursor()
         
         c.execute("CREATE TABLE IF NOT EXISTS chunks (id int, name text)")
