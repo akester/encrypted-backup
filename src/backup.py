@@ -151,11 +151,11 @@ class EBDatabase:
     """
     Stores a chunk
     """
-    def storeChunkInformation(self, id, name):
+    def storeChunkInformation(self, cid, name):
         db = sqlite3.connect(self.path)
         c = db.cursor()
         
-        c.execute("INSERT INTO chunks VALUES ({0}, '{1}')".format(id, name))
+        c.execute("INSERT INTO chunks VALUES ({0}, '{1}')".format(cid, name))
         
         db.commit()
         c.close()
