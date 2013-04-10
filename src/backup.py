@@ -13,12 +13,12 @@ version 3 or, at your option, any later version.
 ## Imports
 #from multiprocessing import Pool
 import argparse
-#import sqlite3
 import ConfigParser
 import datetime
 import gzip
 import hashlib
 import os
+import sqlite3
 import sys
 import tarfile
 import errno
@@ -129,7 +129,14 @@ class EBThreading:
 Database operations
 """
 class EBDatabase:
-    pass
+    def initBackupDB(self, file):
+        db = sqlite3.connect(file)
+        c = db.cursor()
+        
+        c.execute("CREATE TABLE IF NOT EXISTS test (date text)")
+        
+        db.commit()
+        c.close()
 
 
 if __name__ == '__main__':

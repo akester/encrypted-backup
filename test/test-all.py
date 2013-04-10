@@ -90,6 +90,18 @@ class testEBFull(unittest.TestCase):
             os.remove('tmp/hacking.txt')
         except:
             self.fail('Could not remove tmp extraction data.')
+            
+    # Check database functions
+    def test_databaseInit(self):
+        self.ebd.initBackupDB('tmp/testfile.sqlite')
+        self.assertEqual(self.ebm.getFileHash('tmp/testfile.sqlite'), 'af3e1a6ae39e6713d1c746e259351412ade97c18',
+                         'Database is not consistent')
+        
+        try:
+            #Clean the files
+            os.remove('tmp/testfile.sqlite')
+        except:
+            self.fail('Could not remove tmp database data.')
         
 # DO NOT EDIT - This will execute all of the tests above!
 if __name__ == '__main__':
