@@ -94,7 +94,7 @@ class testEBFull(unittest.TestCase):
     # Check database functions
     def test_databaseInit(self):
         self.ebd.initBackupDB('tmp/testfile.sqlite')
-        self.assertEqual(self.ebm.getFileHash('tmp/testfile.sqlite'), 'af3e1a6ae39e6713d1c746e259351412ade97c18',
+        self.assertEqual(self.ebm.getFileHash('tmp/testfile.sqlite'), '0c439b1ea702b2c527e92db55d08b9679f4355cd',
                          'Database is not consistent')
         
         try:

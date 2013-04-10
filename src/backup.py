@@ -133,7 +133,8 @@ class EBDatabase:
         db = sqlite3.connect(file)
         c = db.cursor()
         
-        c.execute("CREATE TABLE IF NOT EXISTS test (date text)")
+        c.execute("CREATE TABLE IF NOT EXISTS chunks (id int, name text)")
+        c.execute("CREATE TABLE IF NOT EXISTS meta (key test, value test)")
         
         db.commit()
         c.close()
