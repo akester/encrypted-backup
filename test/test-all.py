@@ -95,12 +95,20 @@ class testEBFull(unittest.TestCase):
             self.fail('Could not remove tmp extraction data.')
             
     # Check database functions
-    def test_databaseInit(self):
+    def test_database(self):
         ebd = backup.EBDatabase('tmp/test-db-init.sql')
         ebm = backup.EBMain()
         ebd.initBackupDB()
         self.assertEqual(ebm.getFileHash('tmp/test-db-init.sql'), '0c439b1ea702b2c527e92db55d08b9679f4355cd',
-                         'Database is not consistent')
+                         'Database creation is not consistent')
+        
+        # Test some data
+        ebd.storeChunkInformation(1, '1000-1.tar.gz')
+        
+        self.assertEqual(ebm.getFileHash('tmp/test-db-init.sql'), 'c81cf92e0bc0d9fb159761a7cd220ac9fdfafeb1',
+                         'Database storage is not consistent')
+        
+        del ebd
         
         try:
             #Clean the files

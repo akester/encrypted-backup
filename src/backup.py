@@ -147,7 +147,18 @@ class EBDatabase:
         
         db.commit()
         c.close()
-
+        
+    """
+    Stores a chunk
+    """
+    def storeChunkInformation(self, id, name):
+        db = sqlite3.connect(self.path)
+        c = db.cursor()
+        
+        c.execute("INSERT INTO chunks VALUES ({0}, '{1}')".format(id, name))
+        
+        db.commit()
+        c.close()
 
 if __name__ == '__main__':
     ## Argument Parsing
