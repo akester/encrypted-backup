@@ -96,15 +96,15 @@ class testEBFull(unittest.TestCase):
             
     # Check database functions
     def test_databaseInit(self):
-        ebd = backup.EBDatabase('tmp/test-database.sql')
+        ebd = backup.EBDatabase('tmp/test-db-init.sql')
         ebm = backup.EBMain()
         ebd.initBackupDB()
-        self.assertEqual(ebm.getFileHash('tmp/test-database.sql'), '0c439b1ea702b2c527e92db55d08b9679f4355cd',
+        self.assertEqual(ebm.getFileHash('tmp/test-db-init.sql'), '0c439b1ea702b2c527e92db55d08b9679f4355cd',
                          'Database is not consistent')
         
         try:
             #Clean the files
-            os.remove('tmp/test-database.sql')
+            os.remove('tmp/test-db-init.sql')
         except:
             self.fail('Could not remove tmp database data.')
         
