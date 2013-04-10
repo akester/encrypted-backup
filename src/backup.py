@@ -129,6 +129,9 @@ class EBThreading:
 Database operations
 """
 class EBDatabase:
+    """
+    Create a database to be stored with the backups
+    """
     def initBackupDB(self, path):
         db = sqlite3.connect(path)
         c = db.cursor()
