@@ -129,8 +129,8 @@ class EBThreading:
 Database operations
 """
 class EBDatabase:
-    def initBackupDB(self, file):
-        db = sqlite3.connect(file)
+    def initBackupDB(self, path):
+        db = sqlite3.connect(path)
         c = db.cursor()
         
         c.execute("CREATE TABLE IF NOT EXISTS chunks (id int, name text)")
