@@ -47,11 +47,11 @@ class testEBFull(unittest.TestCase):
                          'Test data is not consistent-1')
         # Hash a small directory
         self.assertEqual(ebm.getDirHash('directory/10'),
-                         '184a3ffcc88d3862fdf0e82da4e6bfcc57cacef7',
+                         '0fe397ded78dcb2b7514ca0ae1f84c53d50ad6c8',
                          'Test data is not consistent-2')
         # Hash a larger directory
         self.assertEqual(ebm.getDirHash('directory'),
-                         '7e47a36284dcd3c7839cb7b7c7fd8d33b6842ae5',
+                         '55363c7595457d2ef37d9fccf8d2f5b5bcc3d978',
                          'Test data is not consistent-3')
         
         
@@ -67,10 +67,10 @@ class testEBFull(unittest.TestCase):
             
         # Ensure that we have the same data
         self.assertEqual(ebm.getDirHash('tmp/directory/10'),
-                         '184a3ffcc88d3862fdf0e82da4e6bfcc57cacef7',
+                         '0fe397ded78dcb2b7514ca0ae1f84c53d50ad6c8',
                          'Extracted data is not consistent')
         self.assertEqual(ebm.getFileHash('tmp/10.tar'),
-                         '94e57b5cfea12fc676fe5f837efb078086d91d7f',
+                         'db35a6f697992283644719667e0b955605d2c383',
                          'Archive is not consitent.')
             
         try:
@@ -106,14 +106,14 @@ class testEBFull(unittest.TestCase):
         ebm = backup.EBMain()
         ebd.initBackupDB()
         self.assertEqual(ebm.getFileHash('tmp/test-db-init.sql'),
-                         'ca1c31205d94f30f6278c344c5a009aa2b524a85',
+                         '0c439b1ea702b2c527e92db55d08b9679f4355cd',
                          'Database creation is not consistent')
         
         # Test some data
         ebd.storeChunkInformation(1, '1000-1.tar.gz')
         
         self.assertEqual(ebm.getFileHash('tmp/test-db-init.sql'), 
-                         'c542381ebb16a7e9d633afd1f35593af72e85599',
+                         'c81cf92e0bc0d9fb159761a7cd220ac9fdfafeb1',
                          'Database storage is not consistent')
         
         del ebd
