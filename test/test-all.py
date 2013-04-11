@@ -116,6 +116,12 @@ class testEBFull(unittest.TestCase):
                          'c81cf92e0bc0d9fb159761a7cd220ac9fdfafeb1',
                          'Database storage is not consistent')
         
+        # Test a read
+        # This var should be the chunks we will get from above
+        chunks = {1:'1000-1.tar.gz'}
+        self.assertEqual(ebd.getChunks(), chunks,
+                         'Data fetch was not consitent')
+        
         del ebd
         
         try:

@@ -162,6 +162,17 @@ class EBDatabase:
     def storeChunkInformation(self, cid, name):        
         self.c.execute("INSERT INTO chunks VALUES ({0}, '{1}')".format(cid, name))
         self.db.commit()
+        
+    """
+    Gets all of the chunks and thier files
+    """
+    def getChunks(self):
+        out = {}
+        for row in self.c.execute("SELECT * FROM chunks WHERE 1"):
+            out[row[0]] = row[1]
+        return out
+            
+        
 
 if __name__ == '__main__':
     ## Argument Parsing
