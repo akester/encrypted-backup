@@ -131,34 +131,37 @@ Database operations
 class EBDatabase:
     # Location of the database file we are using.
     path = None
+    db = None
+    c = None
     
+    """
+    Connect to a database
+    """
     def __init__(self, path):
         self.path = path
+        self.db = sqlite3.connect(self.path)
+        self.c = self.db.cursor()
+    
+    """
+    Close the db connection
+    """
+    def __del__(self):
+        self.c.close()    
         
     """
     Create a database to be stored with the backups
     """
-    def initBackupDB(self):
-        db = sqlite3.connect(self.path)
-        c = db.cursor()
-        
-        c.execute("CREATE TABLE IF NOT EXISTS chunks (id int, name text)")
-        c.execute("CREATE TABLE IF NOT EXISTS meta (key test, value test)")
-        
-        db.commit()
-        c.close()
+    def initBackupDB(self):        
+        self.c.execute("CREATE TABLE IF NOT EXISTS chunks (id int, name text)")
+        self.c.execute("CREATE TABLE IF NOT EXISTS meta (key test, value test)")
+        self.db.commit()
         
     """
     Stores a chunk
     """
-    def storeChunkInformation(self, cid, name):
-        db = sqlite3.connect(self.path)
-        c = db.cursor()
-        
-        c.execute("INSERT INTO chunks VALUES ({0}, '{1}')".format(cid, name))
-        
-        db.commit()
-        c.close()
+    def storeChunkInformation(self, cid, name):        
+        self.c.execute("INSERT INTO chunks VALUES ({0}, '{1}')".format(cid, name))
+        self.db.commit()
 
 if __name__ == '__main__':
     ## Argument Parsing
