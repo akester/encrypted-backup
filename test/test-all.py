@@ -25,6 +25,12 @@ class testEBFull(unittest.TestCase):
         self.assertIsInstance(ebm, backup.EBMain)
         self.assertIsInstance(ebt, backup.EBThreading)
         self.assertIsInstance(ebd, backup.EBDatabase)
+        
+        try:
+            #Clean the files
+            os.remove('tmp/test-database.sql')
+        except:
+            self.fail('Could not remove tmp database.')
     
     # Test configuration parsing
     def test_configParsing(self):
