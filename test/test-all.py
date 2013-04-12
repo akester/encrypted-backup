@@ -161,6 +161,22 @@ class testEBFull(unittest.TestCase):
             shutil.rmtree('tmp/archive')
         except:
             self.fail('Could not remove chunked file')
+            
+    # Test the Split chunking
+    def test_chunkingSplit(self):
+        ebm = backup.EBMain()
+        self.assertTrue(ebm.chunkFileSplit('files/archive.tar', 
+                                           'tmp/archive/','archive', 1000))
+        
+        if not os.path.isdir('tmp/archive'):
+            self.fail('Output Directory Failed')
+        
+        # Clean the files
+        try:
+            shutil.rmtree('tmp/archive')
+        except:
+            self.fail('Could not remove chunked file')
+        
         
 # DO NOT EDIT - This will execute all of the tests above!
 if __name__ == '__main__':

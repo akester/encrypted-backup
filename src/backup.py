@@ -19,6 +19,7 @@ import gzip
 import hashlib
 import os
 import sqlite3
+from subprocess import call
 import sys
 import tarfile
 import errno
@@ -173,6 +174,28 @@ class EBMain:
             i += 1
             
         return chunks
+    
+    """
+    Another method of chunking files, this one uses the Linux Split commmand
+    It's less cross platform friendly, but splitting large files with the above
+    commands might use too much ram (since we are reading the entire file into
+    RAM, then chunking the file.
+    """
+    def chunkFileSplit(self, inpath, outpath, prefix, csize):
+        #TODO: Determine number of digits and pass that to split
+        size = self.getFileSize(inpath)
+        chunks = self.calculateChunks(size, csize)
+        
+        digits = len(str(chunks)) 
+        # Create an output directory
+        if not os.path.isdir(outpath):
+            os.mkdir(outpath)
+            
+        outprefix = outpath + '/' + prefix
+            
+        call(["split", "-b " + str(csize), "-d", "-a " + str(digits),
+              inpath, outprefix])
+        return True
     
 """
 Threading functions and operations
