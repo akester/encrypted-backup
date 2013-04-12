@@ -165,8 +165,8 @@ class testEBFull(unittest.TestCase):
     # Test the Split chunking
     def test_chunkingSplit(self):
         ebm = backup.EBMain()
-        self.assertTrue(ebm.chunkFileSplit('files/archive.tar', 
-                                           'tmp/archive/','archive', 1000))
+        self.assertEqual(ebm.chunkFileSplit('files/archive.tar', 
+                                           'tmp/archive/','archive', 1000), 564)
         
         if not os.path.isdir('tmp/archive'):
             self.fail('Output Directory Failed')

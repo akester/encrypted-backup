@@ -195,7 +195,7 @@ class EBMain:
             
         call(["split", "-b " + str(csize), "-d", "-a " + str(digits),
               inpath, outprefix])
-        return True
+        return chunks
     
 """
 Threading functions and operations
