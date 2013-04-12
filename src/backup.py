@@ -118,6 +118,61 @@ class EBMain:
         f = gzip.open(path)
         f_out = open(outpath, 'w+')
         f_out.writelines(f.read())
+        
+    """
+    Get the size of a file
+    """
+    def getFileSize(self, path):
+        return os.path.getsize(path)
+    
+    """
+    Determine the number of chunks we will need
+    """
+    def calculateChunks(self, size, csize):
+        chunks = size / csize
+        if (size % csize):
+            chunks += 1
+        
+        return chunks
+    
+    """
+    Gets a file's data
+    """
+    def getFileData(self, path):
+        f = open(path, 'rb')
+        data = f.read()
+        f.close()
+        
+        return data
+    
+    """
+    Gets a file name
+    """
+    def getFileName(self, path):
+        return os.path.basename(path)
+    
+    def chunkFile(self, inpath, outpath, csize):
+        size = self.getFileSize(inpath)
+        chunks = self.calculateChunks(size, csize)
+        data = self.getFileData(inpath)
+        filename = self.getFileName(inpath)
+        
+        # Create an output directory
+        if not os.path.isdir(outpath):
+            os.mkdir(outpath)
+        
+        # Write the output files
+        i = 1
+        while i <= chunks:
+            outName = outpath + '/' + filename + '.' + str(i)
+            
+            f = open(outName, 'wb')
+            f.write(data[i:i + csize])
+            f.close()
+            
+            i += 1
+            
+        return chunks
     
 """
 Threading functions and operations

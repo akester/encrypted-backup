@@ -135,6 +135,32 @@ class testEBFull(unittest.TestCase):
             os.remove('tmp/test-db-init.sql')
         except:
             self.fail('Could not remove tmp database data.')
+            
+    # Test file chunking
+    def test_chunkingHelpers(self):
+        ebm = backup.EBMain()
+        size = ebm.getFileSize('files/archive.tar')
+        chunks = ebm.calculateChunks(size, 1000)
+        
+        self.assertEqual(size, 563200)
+        self.assertEqual(chunks, 564)
+        self.assertEqual(ebm.getFileData('files/oneline.txt'),
+                         'The quick fox jumed over the lazy brown dog.')
+        self.assertEqual(ebm.getFileName('files/archive.tar'), 'archive.tar')
+        
+    def test_chunkingMain(self):
+        ebm = backup.EBMain()
+        self.assertEqual(ebm.chunkFile('files/archive.tar', 'tmp/archive', 1000),
+                         564)
+        
+        if not os.path.isdir('tmp/archive'):
+            self.fail('Output Directory Failed')
+        
+        # Clean the files
+        try:
+            shutil.rmtree('tmp/archive')
+        except:
+            self.fail('Could not remove chunked file')
         
 # DO NOT EDIT - This will execute all of the tests above!
 if __name__ == '__main__':
