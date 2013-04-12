@@ -6,4 +6,4 @@ echo "Starting in 5 seconds..."
 
 sleep 5
 
-python gen-table.py --threads 4 --out ../files/large-text.txt --min 1 --max 6
+python gen-table.py --threads 4 --out ../files/large-text.txt --min 1 --max 5
