@@ -260,9 +260,10 @@ class EBDatabase:
     """
     Gets metadata
     """
-    def getMeta(self, key = '\'%\''):
+    def getMeta(self, key = '%'):
         out = {}
-        for row in self.c.execute("SELECT * FROM meta WHERE key LIKE " + key):
+        for row in self.c.execute("SELECT * FROM meta WHERE key LIKE '{0}'"
+                                  .format(key)):
             out[row[0]] = row[1]
         return out
             
