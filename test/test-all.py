@@ -22,9 +22,12 @@ class testEBFull(unittest.TestCase):
         ebt = backup.EBThreading()
         ebd = backup.EBDatabase('tmp/test-database.sql')
 
-        self.assertIsInstance(ebm, backup.EBMain)
-        self.assertIsInstance(ebt, backup.EBThreading)
-        self.assertIsInstance(ebd, backup.EBDatabase)
+        try:
+            self.assertIsInstance(ebm, backup.EBMain)
+            self.assertIsInstance(ebt, backup.EBThreading)
+            self.assertIsInstance(ebd, backup.EBDatabase)
+        except AttributeError:
+            pass
         
         try:
             #Clean the files
