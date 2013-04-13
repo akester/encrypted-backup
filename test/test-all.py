@@ -178,7 +178,7 @@ class testEBFull(unittest.TestCase):
             self.fail('Could not remove chunked file')
             
 class testEBExtras(unittest.TestCase):
-    # Test chunking of a large file
+        # Test chunking of a large file
     def test_largeFileChunkingSplit(self):
         ebm = backup.EBMain()
         self.assertEqual(ebm.chunkFileSplit('files/large-text.txt', 
@@ -198,17 +198,16 @@ class testEBExtras(unittest.TestCase):
         ebm = backup.EBMain()
         self.assertEqual(ebm.chunkFile('files/large-text.txt', 'tmp/large-text', 
                                        1000000), 394)
-        
+         
         if not os.path.isdir('tmp/large-text'):
             self.fail('Output Directory Failed')
         
-        # Clean the files
+                # Clean the files
         try:
             shutil.rmtree('tmp/large-text')
         except:
             self.fail('Could not remove chunked file')
-        
-        
+                
 # DO NOT EDIT - This will execute all of the tests above!
-if __name__ == '__main__':
+if __name__ == '__main__':    
     unittest.main()
