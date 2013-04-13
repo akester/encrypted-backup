@@ -81,7 +81,7 @@ class testEBFull(unittest.TestCase):
             self.fail('Could not remove tmp extraction data.')
             
     # Check database functions
-    def test_database(self):
+    def test_databaseChunks(self):
         ebd = backup.EBDatabase('tmp/test-db-init.sql')
         ebm = backup.EBMain()
         ebd.initBackupDB()
@@ -102,6 +102,25 @@ class testEBFull(unittest.TestCase):
             os.remove('tmp/test-db-init.sql')
         except:
             self.fail('Could not remove tmp database data.')
+            
+    def test_databaseMeta(self):
+        ebd = backup.EBDatabase('tmp/test-db-meta.sql')
+        ebm = backup.EBMain()
+        ebd.initBackupDB()
+        
+        ebd.storeMeta('testkey', 'testvalue')
+        
+        meta = {'testkey':'testvalue'}
+        self.assertEqual(ebd.getMeta(), meta)
+        
+        del ebd
+        
+        try:
+            #Clean the files
+            os.remove('tmp/test-db-meta.sql')
+        except:
+            self.fail('Could not remove tmp database data.')
+        
             
     # Test file chunking
     def test_chunkingHelpers(self):

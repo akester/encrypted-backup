@@ -249,6 +249,22 @@ class EBDatabase:
         for row in self.c.execute("SELECT * FROM chunks WHERE 1"):
             out[row[0]] = row[1]
         return out
+    
+    """
+    Stores metadata
+    """
+    def storeMeta(self, key, value):
+        self.c.execute("INSERT INTO meta VALUES('{0}', '{1}')".format(key, value))
+        self.db.commit()
+        
+    """
+    Gets metadata
+    """
+    def getMeta(self, key = '\'%\''):
+        out = {}
+        for row in self.c.execute("SELECT * FROM meta WHERE key LIKE " + key):
+            out[row[0]] = row[1]
+        return out
             
         
 
