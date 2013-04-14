@@ -11,17 +11,19 @@ version 3 or, at your option, any later version.
 """
 
 ## Imports
-#from multiprocessing import Pool
 import argparse
 import ConfigParser
 import datetime
 import gzip
 import hashlib
+import multiprocessing 
 import os
+import signal
 import sqlite3
 from subprocess import call
 import sys
 import tarfile
+import time
 import errno
 
 """
@@ -201,7 +203,41 @@ class EBMain:
 Threading functions and operations
 """
 class EBThreading:
-    pass
+    """
+    Nice Keyboard interrupt handling Copyright 2011 John Reese and released
+    under the MIT License.
+    
+    It allows for the user to stop a threaded job and allow the pool to
+    terminate rather than hanging on pool.join().  This resolves a bug in 2.X 
+    versions of python's multiprocessing module.
+    """
+    def __init__(self, threads = multiprocessing.cpu_count()):
+        self.pool = multiprocessing.Pool(int(threads), self.int_worker)
+        self.inQueue = []
+        self.assigned = 0
+        
+    def int_worker(self):
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        
+    def printProgress(self):
+        completed = self.assigned - len(self.inQueue)
+        percent = float(completed) / self.assigned
+        
+        sys.stdout.write('\r{0}%...'.format(percent))
+        
+    def runPool(self, progress = True):
+        try:
+            while len(self.inQueue) > 0:
+                if progress:
+                    self.printProgress()
+                time.sleep(0.10)
+                
+        except:
+            # User sent SIGINT or the pool crashed. (Either way we should leave)
+            self.pool.terminate()
+            self.pool.join()
+            sys.stdout.write('\n')
+            sys.stdout.flush()
 
 """
 Database operations
