@@ -266,15 +266,17 @@ class EBDatabase:
     Create a database to be stored with the backups
     """
     def initBackupDB(self):        
-        self.c.execute("CREATE TABLE IF NOT EXISTS chunks (id int, name text)")
+        self.c.execute("CREATE TABLE IF NOT EXISTS chunks (id int, name text, " 
+                       + "run integer)")
         self.c.execute("CREATE TABLE IF NOT EXISTS meta (key test, value test)")
         self.db.commit()
         
     """
     Stores a chunk
     """
-    def storeChunkInformation(self, cid, name):        
-        self.c.execute("INSERT INTO chunks VALUES ({0}, '{1}')".format(cid, name))
+    def storeChunkInformation(self, cid, name, run):        
+        self.c.execute("INSERT INTO chunks VALUES ({0}, '{1}', {2})"
+                       .format(cid, name, run))
         self.db.commit()
         
     """

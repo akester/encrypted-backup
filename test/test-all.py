@@ -99,7 +99,7 @@ class testEBFull(unittest.TestCase):
         ebd.initBackupDB()
         
         # Test some data
-        ebd.storeChunkInformation(1, '1000-1.tar.gz')
+        ebd.storeChunkInformation(1, '1000-1.tar.gz', 1)
         
         # Test a read
         # This var should be the chunks we will get from above
