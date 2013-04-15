@@ -189,6 +189,10 @@ class testEBFull(unittest.TestCase):
             #os.remove('tmp/testout2.tar')
         except:
             self.fail('Could not remove chunked file')
+            
+    def test_date(self):
+        ebm = backup.EBMain()
+        self.assertEqual(ebm.getDate(123456), 'Fri Jan  2 04:17:36 1970')
                 
 # DO NOT EDIT - This will execute all of the tests above!
 if __name__ == '__main__':    

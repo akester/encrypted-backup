@@ -37,6 +37,12 @@ class EBMain:
     configFileLocation = '../cfg/eb.conf'
     
     """
+    Converts an epoch time to a string
+    """
+    def getDate(self, epoch):
+        return time.ctime(epoch)
+    
+    """
     A wrapper for configuration file parsing
     """
     def parseConfig(self):
