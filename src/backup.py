@@ -348,3 +348,10 @@ if __name__ == '__main__':
     ebd = EBDatabase('../cfg/eb.sql')
     ebd.initBackupDB()
     ebm = EBMain()
+    
+    sys.stdout.write('Checking for fragments...\n')
+    sys.stdout.flush()
+    result = ebd.getRunStatus(0, '!=')
+    if result:
+        sys.stderr.write('Found fragmented run from {0}'
+                         .format(ebm.getDate(result[0])))
