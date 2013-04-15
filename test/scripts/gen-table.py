@@ -68,7 +68,7 @@ def addStr(chars, test, outfile):
             if (args.p==True):
                 print test
             else:
-                out.write('{}\n'.format(test))
+                out.write('{0}\n'.format(test))
         else:
             # Recurse
             addStr(chars, test, out)
@@ -76,13 +76,13 @@ def addStr(chars, test, outfile):
 # This is what initiates the function above, outputs some data to the user as well.
 def runString(chars, test, outfile):
     if (args.p==False):
-        print '++++ Starting background generation of {} combinations.'.format(chars)
+        print '++++ Starting background generation of {0} combinations.'.format(chars)
 
     # Do the work
     addStr(chars, test, outfile)
 
     if (args.p == False):
-        print '---- Worker for {} combinations complete.'.format(chars)
+        print '---- Worker for {0} combinations complete.'.format(chars)
     #Return for callback
     return chars
 
@@ -102,7 +102,7 @@ if (args.p == False):
         #with open(args.outfile) as out: pass
         out = open(args.outfile, 'w+')
     except IOError as e:
-        print 'E: Could not open output file \'{}\' ({}).'.format(args.outfile, e.strerror)
+        print 'E: Could not open output file \'{0}\' ({1}).'.format(args.outfile, e.strerror)
         e = 1
         exit(e)
 else:
@@ -131,7 +131,7 @@ try:
                 run = True
         time.sleep(1)
     if (args.p==False):
-        print 'All workers completed in {} seconds'.format(t)
+        print 'All workers completed in {0} seconds'.format(t)
 
 # User threw an interrupt.
 except KeyboardInterrupt:
