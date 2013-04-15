@@ -316,10 +316,29 @@ class EBDatabase:
                                   .format(key)):
             out[row[0]] = row[1]
         return out
+    
+    
+    """
+    Gets chunks by status
+    """
+    def getRunStatus(self, status, operator = '='):
+        out = {}
+        for row in self.c.execute("SELECT * FROM runs WHERE status {0} {1}"
+                                  .format(operator, status)):
+            out[row[0]] = row[1]
+            
+        return out
 
 if __name__ == '__main__':
+    
     ## Argument Parsing
-    parser = argparse.ArgumentParser(description="A program to create snapshot backups.")
+    parser = argparse.ArgumentParser(description="A program to create snapshot" 
+                                     + " backups.")
     
     args = parser.parse_args()
     
+    sys.stdout.write('Loading...\n')
+    sys.stdout.flush()
+    ebd = EBDatabase('../cfg/eb.sql')
+    ebd.initBackupDB()
+    ebm = EBMain()
