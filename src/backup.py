@@ -314,8 +314,6 @@ class EBDatabase:
                                   .format(key)):
             out[row[0]] = row[1]
         return out
-            
-        
 
 if __name__ == '__main__':
     ## Argument Parsing
