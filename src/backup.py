@@ -349,6 +349,8 @@ if __name__ == '__main__':
     ebd.initBackupDB()
     ebm = EBMain()
     
+    cfg = ebm.parseConfig()
+    
     sys.stdout.write('Checking for fragments...\n')
     sys.stdout.flush()
     result = ebd.getRunStatus(0, '!=')
