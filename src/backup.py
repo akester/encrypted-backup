@@ -278,7 +278,9 @@ class EBDatabase:
     def initBackupDB(self):        
         self.c.execute("CREATE TABLE IF NOT EXISTS chunks (id int, name text, " 
                        + "run integer)")
-        self.c.execute("CREATE TABLE IF NOT EXISTS meta (key test, value test)")
+        self.c.execute("CREATE TABLE IF NOT EXISTS meta (key text, value text)")
+        self.c.execute("CREATE TABLE IF NOT EXISTS runs (date integer," 
+                       + " status integer)")
         self.db.commit()
         
     """

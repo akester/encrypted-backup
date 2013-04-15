@@ -132,7 +132,18 @@ class testEBFull(unittest.TestCase):
             os.remove('tmp/test-db-meta.sql')
         except:
             self.fail('Could not remove tmp database data.')
+            
+    def test_databaseRuns(self):
+        ebd = backup.EBDatabase('tmp/test-db-runs.sql')
+        ebm = backup.EBMain()
+        ebd.initBackupDB()
         
+        ebd.c.execute('INSERT INTO runs VALUES (0, 1)')
+        ebd.db.commit()
+        
+        # This should equal the data inserted
+        row = {0:1}
+        self.assertEqual(row, ebd.getRunStatus(1))        
             
     # Test file chunking
     def test_chunkingHelpers(self):
