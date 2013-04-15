@@ -148,15 +148,16 @@ class testEBFull(unittest.TestCase):
         
     def test_chunkingMain(self):
         ebm = backup.EBMain()
-        self.assertEqual(ebm.chunkFile('files/archive.tar', 'tmp/archive', 1000),
+        self.assertEqual(ebm.chunkFile('files/archive.tar', 'tmp/archive1', 1000),
                          564)
         
-        if not os.path.isdir('tmp/archive'):
+        if not os.path.isdir('tmp/archive1'):
             self.fail('Output Directory Failed')
+        
         
         # Clean the files
         try:
-            shutil.rmtree('tmp/archive')
+            shutil.rmtree('tmp/archive1')
         except:
             self.fail('Could not remove chunked file')
             
@@ -164,14 +165,17 @@ class testEBFull(unittest.TestCase):
     def test_chunkingSplit(self):
         ebm = backup.EBMain()
         self.assertEqual(ebm.chunkFileSplit('files/archive.tar', 
-                                           'tmp/archive/','archive', 1000), 564)
+                                           'tmp/archive2/','archive', 1000), 564)
         
-        if not os.path.isdir('tmp/archive'):
+        if not os.path.isdir('tmp/archive2'):
             self.fail('Output Directory Failed')
+            
+        ebm.assembleChunksCat('tmp/archive2/*', 'tmp/testout2.tar')
         
         # Clean the files
         try:
-            shutil.rmtree('tmp/archive')
+            shutil.rmtree('tmp/archive2')
+            #os.remove('tmp/testout2.tar')
         except:
             self.fail('Could not remove chunked file')
                 

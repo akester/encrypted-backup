@@ -20,7 +20,7 @@ import multiprocessing
 import os
 import signal
 import sqlite3
-from subprocess import call
+import subprocess
 import sys
 import tarfile
 import time
@@ -195,10 +195,20 @@ class EBMain:
             
         outprefix = outpath + '/' + prefix
             
-        call(["split", "-b " + str(csize), "-d", "-a " + str(digits),
-              inpath, outprefix])
+        subprocess.call(["split", "-b " + str(csize), "-d", "-a " 
+                         + str(digits), inpath, outprefix])
         return chunks
     
+    """
+    Reassembles a chunked file using cat
+    """
+    def assembleChunksCat(self, inpath, outpath):
+        f = open(outpath, 'w+')
+        output = subprocess.Popen('cat ' + inpath, shell=True, stdout=f)
+        output.communicate()
+        f.close()
+        return output
+                
 """
 Threading functions and operations
 """
