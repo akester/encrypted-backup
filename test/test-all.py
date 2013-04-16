@@ -143,7 +143,13 @@ class testEBFull(unittest.TestCase):
         
         # This should equal the data inserted
         row = {0:1}
-        self.assertEqual(row, ebd.getRunStatus(1))        
+        self.assertEqual(row, ebd.getRunStatus(1))
+        
+        try:
+            #Clean the files
+            os.remove('tmp/test-db-runs.sql')
+        except:
+            self.fail('Could not remove tmp database data.')   
             
     # Test file chunking
     def test_chunkingHelpers(self):
