@@ -65,7 +65,7 @@ class testEBFull(unittest.TestCase):
         ebm.archiveDirectory('directory/10', 'tmp/10.tar')
         # Check that the file exists and we can decompress it (ie, it is a tar file)
         try:
-            ebm.dearchiveDirectory('tmp/10.tar')
+            ebm.dearchiveDirectory('tmp/10.tar', 'tmp/.')
         except:
             self.fail('Could not extract tar archive')
             

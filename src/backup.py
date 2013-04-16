@@ -82,9 +82,9 @@ class EBMain:
     """
     Extracts a tar archive
     """        
-    def dearchiveDirectory(self, tar):
+    def dearchiveDirectory(self, tar, outpath):
         tar = tarfile.open(tar)
-        tar.extractall('tmp/.')
+        tar.extractall(outpath)
         tar.close()
         
     """
