@@ -20,11 +20,13 @@ class testEBExtras(unittest.TestCase):
     def test_largeFileChunkingSplit(self):
         ebm = backup.EBMain()
         self.assertEqual(ebm.chunkFileSplit('files/large-text.txt', 
-                                            'tmp/large-text/', 'txt', 1000000),
+                                            'tmp/large-text/', 'txt1', 1000000),
                          394)
         
         if not os.path.isdir('tmp/large-text'):
             self.fail('Output Directory Failed')
+            
+        ebm.assembleChunksCat('tmp/large-text/txt1*', 'tmp/testout-large.tar')
         
         # Clean the files
         try:

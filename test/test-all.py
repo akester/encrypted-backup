@@ -65,7 +65,7 @@ class testEBFull(unittest.TestCase):
         ebm.archiveDirectory('directory/10', 'tmp/10.tar')
         # Check that the file exists and we can decompress it (ie, it is a tar file)
         try:
-            ebm.dearchiveDirectory('tmp/10.tar')
+            ebm.dearchiveDirectory('tmp/10.tar', 'tmp/.')
         except:
             self.fail('Could not extract tar archive')
             
@@ -143,7 +143,13 @@ class testEBFull(unittest.TestCase):
         
         # This should equal the data inserted
         row = {0:1}
-        self.assertEqual(row, ebd.getRunStatus(1))        
+        self.assertEqual(row, ebd.getRunStatus(1))
+        
+        try:
+            #Clean the files
+            os.remove('tmp/test-db-runs.sql')
+        except:
+            self.fail('Could not remove tmp database data.')   
             
     # Test file chunking
     def test_chunkingHelpers(self):
@@ -186,9 +192,26 @@ class testEBFull(unittest.TestCase):
         # Clean the files
         try:
             shutil.rmtree('tmp/archive2')
-            #os.remove('tmp/testout2.tar')
+            os.remove('tmp/testout2.tar')
         except:
             self.fail('Could not remove chunked file')
+            
+    def test_fileJoins(self):
+        ebm = backup.EBMain()
+        self.assertEqual(ebm.chunkFileSplit('files/oneline.txt', 
+                                            'tmp/test-joins', 'join', 10), 
+                         5)
+        
+        ebm.assembleChunksCat('tmp/test-joins/join*', 'tmp/oneline.txt')
+        self.assertEqual(ebm.getFileData('tmp/oneline.txt'), 
+                         'The quick fox jumed over the lazy brown dog.')
+        
+        # Clean the files
+        try:
+            shutil.rmtree('tmp/test-joins')
+            os.remove('tmp/oneline.txt')
+        except:
+            self.fail('Could not remove file')
             
     def test_date(self):
         ebm = backup.EBMain()
