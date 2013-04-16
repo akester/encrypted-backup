@@ -192,9 +192,26 @@ class testEBFull(unittest.TestCase):
         # Clean the files
         try:
             shutil.rmtree('tmp/archive2')
-            #os.remove('tmp/testout2.tar')
+            os.remove('tmp/testout2.tar')
         except:
             self.fail('Could not remove chunked file')
+            
+    def test_fileJoins(self):
+        ebm = backup.EBMain()
+        self.assertEqual(ebm.chunkFileSplit('files/oneline.txt', 
+                                            'tmp/test-joins', 'join', 10), 
+                         5)
+        
+        ebm.assembleChunksCat('tmp/test-joins/join*', 'tmp/oneline.txt')
+        self.assertEqual(ebm.getFileData('tmp/oneline.txt'), 
+                         'The quick fox jumed over the lazy brown dog.')
+        
+        # Clean the files
+        try:
+            shutil.rmtree('tmp/test-joins')
+            os.remove('tmp/oneline.txt')
+        except:
+            self.fail('Could not remove file')
             
     def test_date(self):
         ebm = backup.EBMain()
