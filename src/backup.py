@@ -214,6 +214,22 @@ class EBMain:
         output.communicate()
         f.close()
         return output
+    
+    """
+    Reassembles a chunked file
+    
+    This function does not return data in order (a limitation of os.walk)
+    """
+    def assembleChunks(self, inpath, outpath):
+        chunks = 0
+        out = open(outpath, 'a+')
+        for root, dirs, files in os.walk(inpath):
+            for f in files:
+                inf = open(root + '/' + f, 'r')
+                out.write(inf.read())
+                chunks += 1
+                
+        return chunks
                 
 """
 Threading functions and operations
