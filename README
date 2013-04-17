@@ -1,1 +1,27 @@
-#TODO: Make a readme
+Encrypted Backup Readme
+
+1. Introduction
+	This program is designed to offer system administrators a method of 
+safely using offsite backup solutions for disaster recovery.  This program will
+archive, compress, encrypt, transfer, and manage files for offsite backups
+automatically.
+
+2. License
+	This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+3. Project
+	Project data is online on SourceForge and GitHub.  Search for
+Encrypted Backup.  As a side note: both of these repos will be the same, the
+master copy is kept on a private repo.
+
