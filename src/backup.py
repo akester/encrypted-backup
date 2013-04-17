@@ -160,28 +160,28 @@ class EBMain:
     def getFileName(self, path):
         return os.path.basename(path)
     
-    def chunkFile(self, inpath, outpath, csize):
-        size = self.getFileSize(inpath)
-        chunks = self.calculateChunks(size, csize)
-        data = self.getFileData(inpath)
-        filename = self.getFileName(inpath)
-        
-        # Create an output directory
-        if not os.path.isdir(outpath):
-            os.mkdir(outpath)
-        
-        # Write the output files
-        i = 1
-        while i <= chunks:
-            outName = outpath + '/' + filename + '.' + str(i)
-            
-            f = open(outName, 'wb')
-            f.write(data[i:i + csize])
-            f.close()
-            
-            i += 1
-            
-        return chunks
+#    def chunkFile(self, inpath, outpath, csize):
+#        size = self.getFileSize(inpath)
+#        chunks = self.calculateChunks(size, csize)
+#        data = self.getFileData(inpath)
+#        filename = self.getFileName(inpath)
+#        
+#        # Create an output directory
+#        if not os.path.isdir(outpath):
+#            os.mkdir(outpath)
+#        
+#        # Write the output files
+#        i = 1
+#        while i <= chunks:
+#            outName = outpath + '/' + filename + '.' + str(i)
+#            
+#            f = open(outName, 'wb')
+#            f.write(data[i:i + csize])
+#            f.close()
+#            
+#            i += 1
+#            
+#        return chunks
     
     """
     Another method of chunking files, this one uses the Linux Split commmand
@@ -220,16 +220,16 @@ class EBMain:
     
     This function does not return data in order (a limitation of os.walk)
     """
-    def assembleChunks(self, inpath, outpath):
-        chunks = 0
-        out = open(outpath, 'a+')
-        for root, dirs, files in os.walk(inpath):
-            for f in files:
-                inf = open(root + '/' + f, 'r')
-                out.write(inf.read())
-                chunks += 1
-                
-        return chunks
+#    def assembleChunks(self, inpath, outpath):
+#        chunks = 0
+#        out = open(outpath, 'a+')
+#        for root, dirs, files in os.walk(inpath):
+#            for f in files:
+#                inf = open(root + '/' + f, 'r')
+#                out.write(inf.read())
+#                chunks += 1
+#                
+#        return chunks
                 
 """
 Threading functions and operations

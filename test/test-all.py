@@ -163,20 +163,20 @@ class testEBFull(unittest.TestCase):
                          'The quick fox jumed over the lazy brown dog.')
         self.assertEqual(ebm.getFileName('files/archive.tar'), 'archive.tar')
         
-    def test_chunkingMain(self):
-        ebm = backup.EBMain()
-        self.assertEqual(ebm.chunkFile('files/archive.tar', 'tmp/archive1', 1000),
-                         564)
-        
-        if not os.path.isdir('tmp/archive1'):
-            self.fail('Output Directory Failed')
-        
-        
-        # Clean the files
-        try:
-            shutil.rmtree('tmp/archive1')
-        except:
-            self.fail('Could not remove chunked file')
+#    def test_chunkingMain(self):
+#        ebm = backup.EBMain()
+#        self.assertEqual(ebm.chunkFile('files/archive.tar', 'tmp/archive1', 1000),
+#                         564)
+#        
+#        if not os.path.isdir('tmp/archive1'):
+#            self.fail('Output Directory Failed')
+#        
+#        
+#        # Clean the files
+#        try:
+#            shutil.rmtree('tmp/archive1')
+#        except:
+#            self.fail('Could not remove chunked file')
             
     # Test the Split chunking
     def test_chunkingSplit(self):
@@ -214,22 +214,22 @@ class testEBFull(unittest.TestCase):
             self.fail('Could not remove file')
             
             
-    def test_fileJoins(self):
-        ebm = backup.EBMain()
-        self.assertEqual(ebm.chunkFile('files/oneline.txt', 'tmp/test-joins',
-                                       10), 5)
-        
-        ebm.assembleChunks('tmp/test-joins', 'tmp/oneline.txt')
-        self.assertEqual(ebm.getFileData('tmp/oneline.txt'), 
-                         'The quick fox jumed over the lazy brown dog.')
-        
-        # Clean the files
-        try:
-            shutil.rmtree('tmp/test-joins')
-            os.remove('tmp/oneline.txt')
-        except:
-            self.fail('Could not remove file')
-            
+#    def test_fileJoins(self):
+#        ebm = backup.EBMain()
+#        self.assertEqual(ebm.chunkFile('files/oneline.txt', 'tmp/test-joins',
+#                                       10), 5)
+#        
+#        ebm.assembleChunks('tmp/test-joins', 'tmp/oneline.txt')
+#        self.assertEqual(ebm.getFileData('tmp/oneline.txt'), 
+#                         'The quick fox jumed over the lazy brown dog.')
+#        
+#        # Clean the files
+#        try:
+#            shutil.rmtree('tmp/test-joins')
+#            os.remove('tmp/oneline.txt')
+#        except:
+#            self.fail('Could not remove file')
+#            
     def test_date(self):
         ebm = backup.EBMain()
         self.assertEqual(ebm.getDate(123456), 'Fri Jan  2 04:17:36 1970')
