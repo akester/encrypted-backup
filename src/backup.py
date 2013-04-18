@@ -14,6 +14,7 @@ version 3 or, at your option, any later version.
 import argparse
 import ConfigParser
 import datetime
+import gnupg
 import gzip
 import hashlib
 import multiprocessing 
@@ -339,7 +340,6 @@ class EBDatabase:
             out[row[0]] = row[1]
         return out
     
-    
     """
     Gets chunks by status
     """
@@ -350,6 +350,23 @@ class EBDatabase:
             out[row[0]] = row[1]
             
         return out
+    
+"""
+Encryption Functions
+"""
+class EBEncryption:
+    def __init__(self):
+        self.gpg = gnupg.GPG()
+        
+    def encryptFile(self, infile, outfile, key):
+        f = open(infile)
+        self.gpg.encrypt_file(f, key, output=outfile)
+        f.close()
+    
+    def decryptFile(self, infile, outfile, passphrase):
+        f = open(infile)
+        self.gpg.decrypt_file(f, output=outfile, passphrase=passphrase)
+        f.close()   
 
 if __name__ == '__main__':
     

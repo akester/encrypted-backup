@@ -21,11 +21,13 @@ class testEBFull(unittest.TestCase):
         ebm = backup.EBMain()
         ebt = backup.EBThreading()
         ebd = backup.EBDatabase('tmp/test-database.sql')
+        ebe = backup.EBEncryption()
 
         try:
             self.assertIsInstance(ebm, backup.EBMain)
             self.assertIsInstance(ebt, backup.EBThreading)
             self.assertIsInstance(ebd, backup.EBDatabase)
+            self.assertIsInstance(ebe, backup.EBEncryption)
         except AttributeError:
             pass
         
@@ -233,6 +235,14 @@ class testEBFull(unittest.TestCase):
     def test_date(self):
         ebm = backup.EBMain()
         self.assertEqual(ebm.getDate(123456), 'Fri Jan  2 04:17:36 1970')
+    
+    # Encrypt/Decrypt
+    def test_encryption(self):
+        ebe = backup.EBEncryption()
+        
+        ebe.encryptFile('files/oneline.txt', 'tmp/outfile.txt', '8807C3E8')
+        ebe.decryptFile('tmp/outfile.txt', 'tmp/oneline.txt', '$howmedaMunny266')
+        
                 
 # DO NOT EDIT - This will execute all of the tests above!
 if __name__ == '__main__':    
