@@ -21,7 +21,7 @@ class testEBFull(unittest.TestCase):
         ebm = backup.EBMain()
         ebt = backup.EBThreading()
         ebd = backup.EBDatabase('tmp/test-database.sql')
-        ebe = backup.EBEncryption()
+        ebe = backup.EBEncryption('tmp')
 
         try:
             self.assertIsInstance(ebm, backup.EBMain)
@@ -238,10 +238,21 @@ class testEBFull(unittest.TestCase):
     
     # Encrypt/Decrypt
     def test_encryption(self):
-        ebe = backup.EBEncryption()
+        ebe = backup.EBEncryption('/home/andrew/.gnupg')
+        ebm = backup.EBMain()
         
-        ebe.encryptFile('files/oneline.txt', 'tmp/outfile.txt', '8807C3E8')
-        ebe.decryptFile('tmp/outfile.txt', 'tmp/oneline.txt', '$howmedaMunny266')
+        exit = ebe.encryptFile('files/oneline.txt', 'tmp/outfile-c.txt', '8807C3E8', 
+                               '')
+        self.assertEqual(exit, 'encryption ok')
+        
+        exit = ebe.decryptFile('tmp/outfile-c.txt', 'tmp/oneline-c.txt',
+                               '')
+        self.assertEqual(exit, 'decryption ok')
+        
+        # Verify Contents
+        self.assertEqual(ebm.getFileData('tmp/oneline-c.txt'),
+                         'The quick fox jumed over the lazy brown dog.')
+        
         
                 
 # DO NOT EDIT - This will execute all of the tests above!

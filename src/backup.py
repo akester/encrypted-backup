@@ -355,18 +355,24 @@ class EBDatabase:
 Encryption Functions
 """
 class EBEncryption:
-    def __init__(self):
-        self.gpg = gnupg.GPG()
+    def __init__(self, keyring):
+        self.gpg = gnupg.GPG(gnupghome=keyring)
         
-    def encryptFile(self, infile, outfile, key):
+    def encryptFile(self, infile, outfile, key, passp):
         f = open(infile)
-        self.gpg.encrypt_file(f, key, output=outfile)
+        crypt = self.gpg.encrypt_file(f, key, output=outfile, passphrase=passp,
+                                      always_trust=True)
         f.close()
+        
+        return crypt.status
+        
     
-    def decryptFile(self, infile, outfile, passphrase):
+    def decryptFile(self, infile, outfile, passp):
         f = open(infile)
-        self.gpg.decrypt_file(f, output=outfile, passphrase=passphrase)
-        f.close()   
+        crypt = self.gpg.decrypt_file(f, output=outfile, passphrase=passp)
+        f.close()
+        
+        return crypt.status
 
 if __name__ == '__main__':
     
