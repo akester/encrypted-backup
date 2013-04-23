@@ -241,12 +241,12 @@ class testEBFull(unittest.TestCase):
         ebe = backup.EBEncryption('/home/andrew/.gnupg')
         ebm = backup.EBMain()
         
-        exit = ebe.encryptFile('files/oneline.txt', 'tmp/outfile-c.txt', '8807C3E8', 
-                               '')
+        exit = ebe.encryptFile('files/oneline.txt', 'tmp/outfile-c.txt', '704A6507', 
+                               'passphrase')
         self.assertEqual(exit, 'encryption ok')
         
         exit = ebe.decryptFile('tmp/outfile-c.txt', 'tmp/oneline-c.txt',
-                               '')
+                               'passphrase')
         self.assertEqual(exit, 'decryption ok')
         
         # Verify Contents
