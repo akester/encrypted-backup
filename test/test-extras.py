@@ -61,10 +61,6 @@ class testEBExtras(unittest.TestCase):
                                'passphrase')
         self.assertEqual(exit, 'decryption ok')
         
-        # Verify Contents
-        self.assertEqual(ebm.getFileData('tmp/oneline-c.txt'),
-                         'The quick fox jumed over the lazy brown dog.')
-        
         try:
             os.remove('tmp/oneline-c.txt')
             os.remove('tmp/outfile-c.txt')
