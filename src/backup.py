@@ -138,8 +138,8 @@ class EBMain:
     Determine the number of chunks we will need
     """
     def calculateChunks(self, size, csize):
-        chunks = size / csize
-        if (size % csize):
+        chunks = size / int(csize)
+        if (size % int(csize)):
             chunks += 1
         
         return chunks
@@ -199,7 +199,7 @@ class EBMain:
         if not os.path.isdir(outpath):
             os.mkdir(outpath)
             
-        outprefix = outpath + '/' + prefix
+        outprefix = str(outpath) + '/' + str(prefix)
             
         subprocess.call(["split", "-b " + str(csize), "-d", "-a " 
                          + str(digits), inpath, outprefix])
