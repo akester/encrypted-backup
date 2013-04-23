@@ -253,6 +253,12 @@ class testEBFull(unittest.TestCase):
         self.assertEqual(ebm.getFileData('tmp/oneline-c.txt'),
                          'The quick fox jumed over the lazy brown dog.')
         
+        try:
+            os.remove('tmp/oneline-c.txt')
+            os.remove('tmp/outfile-c.txt')
+        except:
+            self.fail('Could not remove file')
+        
         
                 
 # DO NOT EDIT - This will execute all of the tests above!
