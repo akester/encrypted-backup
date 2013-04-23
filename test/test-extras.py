@@ -47,6 +47,29 @@ class testEBExtras(unittest.TestCase):
 #            shutil.rmtree('tmp/large-text')
 #        except:
 #            self.fail('Could not remove chunked file')
+
+    # Encrypt/Decrypt
+    def test_encryption(self):
+        ebe = backup.EBEncryption('/home/andrew/.gnupg')
+        ebm = backup.EBMain()
+        
+        exit = ebe.encryptFile('files/large-text.txt', 'tmp/outfile-c.txt', 
+                               '704A6507', 'passphrase')
+        self.assertEqual(exit, 'encryption ok')
+        
+        exit = ebe.decryptFile('tmp/outfile-c.txt', 'tmp/oneline-c.txt',
+                               'passphrase')
+        self.assertEqual(exit, 'decryption ok')
+        
+        # Verify Contents
+        self.assertEqual(ebm.getFileData('tmp/oneline-c.txt'),
+                         'The quick fox jumed over the lazy brown dog.')
+        
+        try:
+            os.remove('tmp/oneline-c.txt')
+            os.remove('tmp/outfile-c.txt')
+        except:
+            self.fail('Could not remove file')
                 
 # DO NOT EDIT - This will execute all of the tests above!
 if __name__ == '__main__':    
