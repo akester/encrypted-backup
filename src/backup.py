@@ -68,9 +68,8 @@ class EBMain:
     """
     Generates the hash for this snapshot
     """
-    def generateSnapshotHash(self):
-        datestr = datetime.datetime.today().strftime("%I:%M%p on %B %d, %Y")
-        return hashlib.sha1(datestr).hexdigest()
+    def generateSnapshotHash(self, path):
+        return hashlib.sha1(path).hexdigest()
     
     """
     Archive a directory
