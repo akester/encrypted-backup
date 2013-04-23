@@ -378,20 +378,33 @@ if __name__ == '__main__':
     ## Argument Parsing
     parser = argparse.ArgumentParser(description="A program to create snapshot" 
                                      + " backups.")
-    
+    parser.add_argument('--path', required="true", dest="path", help="Source path to back up")
+    parser.add_argument('--outpath', required=True, dest="outpath", help="Output path of files to be copied.")
+    parser.add_argument('--tmppath', required=True, dest="tmppath", help="Temporary Output path of files to be copied.")
+    parser.add_argument('--csize', required=False, dest="csize", default="100000")
     args = parser.parse_args()
     
-    sys.stdout.write('Loading...\n')
-    sys.stdout.flush()
     ebd = EBDatabase('../cfg/eb.sql')
     ebd.initBackupDB()
     ebm = EBMain()
     
     cfg = ebm.parseConfig()
     
-    sys.stdout.write('Checking for fragments...\n')
-    sys.stdout.flush()
-    result = ebd.getRunStatus(0, '!=')
-    if result:
-        sys.stderr.write('Found fragmented run from {0}'
-                         .format(ebm.getDate(result[0])))
+    # Make sure the path exists
+    if not os.path.isdir(args.path) and not os.path.isfile(args.path):
+        sys.stderr.write('E: Path ({0}) does not exist.\n'.format(args.path))
+        exit(errno.ENOENT)
+        
+    # Make a tmp file (it could be too large for /tmp to handle and we want the
+    # files in case the system crashes/reboots during our operations)
+    if not os.path.isdir(args.tmppath):
+        try:
+            os.mkdir(args.tmppath)
+        except OSError as e:
+            sys.stdout.write('E: Could not create output directory: {0}'
+                             .format(e))
+            exit(errno.EIO)
+    
+    # Archive the files
+    ebm.archiveDirectory(args.path, args.tmppath + '/eb-tmp.tar')
+    ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, str(time.time()) + '_', args.csize)
