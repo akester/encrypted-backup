@@ -44,7 +44,8 @@ class testEBFull(unittest.TestCase):
         self.assertEqual(ebm.configFileLocation, '../cfg/eb.conf')
         # Check parsing functions
         # This variable should equal the test config's keys and values.
-        cfgData = {'main': { 'keyid':'704A6507'
+        cfgData = {'main': { 'keyid':'704A6507',
+                            'passp':'passphrase'
                             },
                    '10': { 'days':'1',
                           'local':'../test/directory/10',
