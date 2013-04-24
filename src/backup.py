@@ -228,8 +228,8 @@ if __name__ == '__main__':
                              .format(args.path))
             exit(errno.ENOENT)
             
-        # Make a tmp file (it could be too large for /tmp to handle and we want the
-        # files in case the system crashes/reboots during our operations)
+        # Make a tmp file (it could be too large for /tmp to handle and we want
+        # the files in case the system crashes/reboots during our operations)
         if not os.path.isdir(args.tmppath):
             try:
                 os.mkdir(args.tmppath)
