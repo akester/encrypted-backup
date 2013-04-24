@@ -447,7 +447,7 @@ if __name__ == '__main__':
                 exit(errno.EIO)
                         
         # Archive the files
-        sys.stdout.write('Tarring files...\n')
+        sys.stdout.write('Taring files...\n')
         ebm.archiveDirectory(args.path, args.tmppath + '/eb-tmp.tar')
         ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, str(time.time()) + '_', args.csize)
     
