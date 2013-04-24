@@ -422,7 +422,7 @@ if __name__ == '__main__':
         
         for root, dirs, files in os.walk(args.tmppath):
             for f in files:
-                ebt.inqueue.append(root + '/' + f)
+                ebe.encryptFile(root + '/' + f, args.outpath + '/' + f + '.pgp', cfg['main']['passp'])
         
         # Start the threading process
         
