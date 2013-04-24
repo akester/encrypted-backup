@@ -10,7 +10,6 @@ Public License version 3 or, at your option, any later version.
 ## Imports
 import argparse
 import ConfigParser
-import datetime
 import gnupg
 import gzip
 import hashlib
