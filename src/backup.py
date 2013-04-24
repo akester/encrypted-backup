@@ -201,14 +201,23 @@ if __name__ == '__main__':
                                  .format(e))
                 exit(errno.EIO)
         
-        for root, dirs, files in os.walk(args.tmppath):
+        sys.stdout.write('Decrypting Files...\n')
+        for root, dirs, files in os.walk(args.path):
+            numFiles = len(files)
+            x = 0
             for f in files:
-                ebe.encryptFile(root + '/' + f, args.outpath + '/' + f + '.pgp',
-                                 cfg['main']['passp'])
+                x += 1
+                status = ebe.decryptFile(root + '/' + f, args.tmppath + '/' 
+                                         + f + '.part', cfg['main']['passp'])
+                sys.stdout.write('Decrypted file {0} of {1}\n'
+                                 .format(x, numFiles))
+                if status != 'decryption ok':
+                    sys.stderr.write('E: Decryption Error\n')
+                    exit(1)
         
         # Start the threading process
         
-        ebm.assembleChunksCat(args.tmppath, args.outpath)
+        ebm.assembleChunksCat(args.tmppath + '/*', args.outpath)
         shutil.rmtree(args.tmppath)
         
         exit(0)
@@ -244,8 +253,12 @@ if __name__ == '__main__':
             x=0
             for f in files:
                 x += 1
-                ebe.encryptFile(root + '/' + f, args.outpath + '/' + f + '.pgp',
-                                 cfg['main']['keyid'], cfg['main']['passp'])
+                status = ebe.encryptFile(root + '/' + f, args.outpath + '/' 
+                                         + f + '.pgp', cfg['main']['keyid'], 
+                                         cfg['main']['passp'])
+                if status != 'encryption ok':
+                    sys.stderr.write('E: Encryption Error.')
+                    exit(1)
                 sys.stdout.write('Encrypted file {0} of {1}\n'
                                  .format(x, numFiles))
 
