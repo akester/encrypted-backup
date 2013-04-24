@@ -19,6 +19,7 @@ import gzip
 import hashlib
 import multiprocessing 
 import os
+import shutil
 import signal
 import sqlite3
 import subprocess
@@ -378,33 +379,91 @@ if __name__ == '__main__':
     ## Argument Parsing
     parser = argparse.ArgumentParser(description="A program to create snapshot" 
                                      + " backups.")
-    parser.add_argument('--path', required="true", dest="path", help="Source path to back up")
+    parser.add_argument('--path', required=True, dest="path", help="Source path to back up")
     parser.add_argument('--outpath', required=True, dest="outpath", help="Output path of files to be copied.")
     parser.add_argument('--tmppath', required=True, dest="tmppath", help="Temporary Output path of files to be copied.")
     parser.add_argument('--csize', required=False, dest="csize", default="100000")
+    parser.add_argument('--restore', required=False, dest="rest", action="store_true", default=False)
     args = parser.parse_args()
     
     ebd = EBDatabase('../cfg/eb.sql')
     ebd.initBackupDB()
     ebm = EBMain()
+    ebe = EBEncryption(os.path.expanduser('~/.gnupg'))
     
     cfg = ebm.parseConfig()
-    
-    # Make sure the path exists
-    if not os.path.isdir(args.path) and not os.path.isfile(args.path):
-        sys.stderr.write('E: Path ({0}) does not exist.\n'.format(args.path))
-        exit(errno.ENOENT)
         
-    # Make a tmp file (it could be too large for /tmp to handle and we want the
-    # files in case the system crashes/reboots during our operations)
-    if not os.path.isdir(args.tmppath):
-        try:
-            os.mkdir(args.tmppath)
-        except OSError as e:
-            sys.stdout.write('E: Could not create output directory: {0}'
-                             .format(e))
-            exit(errno.EIO)
+    try:
+        cfg['main']['keyid'] = cfg['main']['keyid']
+        cfg['main']['passp'] = cfg['main']['passp']
+    except KeyError as e:
+        sys.stderr.write('E: Missing configuration value {0}\n'.format(e))
+        exit(errno.EINVAL)
+        
+                        
+    # Create threading
+    ebt = EBThreading()
     
-    # Archive the files
-    ebm.archiveDirectory(args.path, args.tmppath + '/eb-tmp.tar')
-    ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, str(time.time()) + '_', args.csize)
+    if args.rest:
+        # Make sure the path exists
+        if not os.path.isdir(args.path):
+            sys.stderr.write('E: Path ({0}) does not exist.\n'.format(args.path))
+            exit(errno.ENOENT)
+            
+        # Make a tmp file (it could be too large for /tmp to handle and we want the
+        # files in case the system crashes/reboots during our operations)
+        if not os.path.isdir(args.tmppath):
+            try:
+                os.mkdir(args.tmppath)
+            except OSError as e:
+                sys.stdout.write('E: Could not create output directory: {0}\n'
+                                 .format(e))
+                exit(errno.EIO)
+        
+        for root, dirs, files in os.walk(args.tmppath):
+            for f in files:
+                ebt.inqueue.append(root + '/' + f)
+        
+        # Start the threading process
+        
+        ebm.assembleChunksCat(args.tmppath, args.outpath)
+        shutil.rmtree(args.tmppath)
+        
+        exit(0)
+    else:
+        # Make sure the path exists
+        if not os.path.isdir(args.path) and not os.path.isfile(args.path):
+            sys.stderr.write('E: Path ({0}) does not exist.\n'.format(args.path))
+            exit(errno.ENOENT)
+            
+        # Make a tmp file (it could be too large for /tmp to handle and we want the
+        # files in case the system crashes/reboots during our operations)
+        if not os.path.isdir(args.tmppath):
+            try:
+                os.mkdir(args.tmppath)
+            except OSError as e:
+                sys.stdout.write('E: Could not create output directory: {0}\n'
+                                 .format(e))
+                exit(errno.EIO)
+                        
+        # Archive the files
+        sys.stdout.write('Tarring files...\n')
+        ebm.archiveDirectory(args.path, args.tmppath + '/eb-tmp.tar')
+        ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, str(time.time()) + '_', args.csize)
+    
+        # Remove the original tmp tar file
+        os.remove(args.tmppath + '/eb-tmp.tar')
+    
+        # Encrypt the files using the key provided
+        for root, dirs, files in os.walk(args.tmppath):
+            numFiles = len(files)
+            x=0
+            for f in files:
+                x += 1
+                ebe.encryptFile(root + '/' + f, args.outpath + '/' + f + '.pgp', cfg['main']['keyid'], cfg['main']['passp'])
+                sys.stdout.write('Encrypted file {0} of {1}\n'.format(x, numFiles))
+                
+        ebt.runPool(True)
+        shutil.rmtree(args.tmppath)
+            
+        exit(0)
