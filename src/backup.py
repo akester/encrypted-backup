@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 
 """
-A Program to create chunked snapshot backups and encrpyt the resulting files.  Will also
-Manage the files in a local or seperate file system, allowing for the encrpyted files
-to be stored in an offiste filesystem (either a custom setup or a service like Amazon
-Glacier)
+A Program to create chunked snapshot backups and encrpyt the resulting files.
 
-This program is copyright 2013 Andrew Kester, released under the GNU General Public License
-version 3 or, at your option, any later version.
+This program is copyright 2013 Andrew Kester, released under the GNU General
+Public License version 3 or, at your option, any later version.
 """
 
 ## Imports
@@ -53,7 +50,8 @@ class EBMain:
             config = ConfigParser.SafeConfigParser()
             config.read(self.configFileLocation)
         except ConfigParser.Error as e:
-            sys.stdout.write('Error parsing configuration.  Returned: {0}\n'.format(e))
+            sys.stdout.write('Error parsing configuration.  Returned: {0}\n'
+                             .format(e))
             sys.stdout.flush()
             exit(-errno.EIO)
         
@@ -327,7 +325,8 @@ class EBDatabase:
     Stores metadata
     """
     def storeMeta(self, key, value):
-        self.c.execute("INSERT INTO meta VALUES('{0}', '{1}')".format(key, value))
+        self.c.execute("INSERT INTO meta VALUES('{0}', '{1}')".
+                       format(key, value))
         self.db.commit()
         
     """
@@ -379,11 +378,19 @@ if __name__ == '__main__':
     ## Argument Parsing
     parser = argparse.ArgumentParser(description="A program to create snapshot" 
                                      + " backups.")
-    parser.add_argument('--path', required=True, dest="path", help="Source path to back up")
-    parser.add_argument('--outpath', required=True, dest="outpath", help="Output path of files to be copied.")
-    parser.add_argument('--tmppath', required=True, dest="tmppath", help="Temporary Output path of files to be copied.")
-    parser.add_argument('--csize', required=False, dest="csize", default="100000", help="The size, in bytes, of each file chunk")
-    parser.add_argument('--restore', required=False, dest="rest", action="store_true", default=False, help="Restore the files from --path rather than encrypt them.")
+    parser.add_argument('--path', required=True, dest="path", 
+                        help="Source path to back up")
+    parser.add_argument('--outpath', required=True, dest="outpath",
+                         help="Output path of files to be copied.")
+    parser.add_argument('--tmppath', required=True, dest="tmppath", 
+                        help="Temporary Output path of files to be copied.")
+    parser.add_argument('--csize', required=False, dest="csize", 
+                        default="100000", help="The size, in bytes, of each file"
+                        + " chunk")
+    parser.add_argument('--restore', required=False, dest="rest", 
+                        action="store_true", default=False, 
+                        help="Restore the files from --path rather than encrypt"
+                        + " them.")
     args = parser.parse_args()
     
     ebd = EBDatabase('../cfg/eb.sql')
@@ -407,7 +414,8 @@ if __name__ == '__main__':
     if args.rest:
         # Make sure the path exists
         if not os.path.isdir(args.path):
-            sys.stderr.write('E: Path ({0}) does not exist.\n'.format(args.path))
+            sys.stderr.write('E: Path ({0}) does not exist.\n'
+                             .format(args.path))
             exit(errno.ENOENT)
             
         # Make a tmp file (it could be too large for /tmp to handle and we want the
@@ -422,7 +430,8 @@ if __name__ == '__main__':
         
         for root, dirs, files in os.walk(args.tmppath):
             for f in files:
-                ebe.encryptFile(root + '/' + f, args.outpath + '/' + f + '.pgp', cfg['main']['passp'])
+                ebe.encryptFile(root + '/' + f, args.outpath + '/' + f + '.pgp',
+                                 cfg['main']['passp'])
         
         # Start the threading process
         
@@ -433,7 +442,8 @@ if __name__ == '__main__':
     else:
         # Make sure the path exists
         if not os.path.isdir(args.path) and not os.path.isfile(args.path):
-            sys.stderr.write('E: Path ({0}) does not exist.\n'.format(args.path))
+            sys.stderr.write('E: Path ({0}) does not exist.\n'
+                             .format(args.path))
             exit(errno.ENOENT)
             
         # Make a tmp file (it could be too large for /tmp to handle and we want the
@@ -449,7 +459,8 @@ if __name__ == '__main__':
         # Archive the files
         sys.stdout.write('Taring files...\n')
         ebm.archiveDirectory(args.path, args.tmppath + '/eb-tmp.tar')
-        ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, str(time.time()) + '_', args.csize)
+        ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, 
+                           str(time.time()) + '_', args.csize)
     
         # Remove the original tmp tar file
         os.remove(args.tmppath + '/eb-tmp.tar')
@@ -460,8 +471,10 @@ if __name__ == '__main__':
             x=0
             for f in files:
                 x += 1
-                ebe.encryptFile(root + '/' + f, args.outpath + '/' + f + '.pgp', cfg['main']['keyid'], cfg['main']['passp'])
-                sys.stdout.write('Encrypted file {0} of {1}\n'.format(x, numFiles))
+                ebe.encryptFile(root + '/' + f, args.outpath + '/' + f + '.pgp',
+                                 cfg['main']['keyid'], cfg['main']['passp'])
+                sys.stdout.write('Encrypted file {0} of {1}\n'
+                                 .format(x, numFiles))
                 
         ebt.runPool(True)
         shutil.rmtree(args.tmppath)
