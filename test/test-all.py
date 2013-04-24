@@ -36,18 +36,6 @@ class testEBFull(unittest.TestCase):
         # This variable should equal the test config's keys and values.
         cfgData = {'main': { 'keyid':'704A6507',
                             'passp':'passphrase'
-                            },
-                   '10': { 'days':'1',
-                          'local':'../test/directory/10',
-                          'remote':'/tmp',
-                          'mounted':'true'
-                          },
-                   '10-2': { 'days':'1',
-                            'local':'../test/directory/10',
-                            'remote':'/tmp',
-                            'mounted':'false',
-                            'pre':'uname',
-                            'post':'uname'
                             }
                    }
         self.assertEqual(ebm.parseConfig(), cfgData, 'CFG Data is invalid.')        
