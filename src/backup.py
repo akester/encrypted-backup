@@ -27,7 +27,7 @@ class EBMain:
     System-specific Variables
     """
     # The location of the configuration files (default: /etc/eb/eb.conf
-    configFileLocation = '../cfg/eb.conf'
+    configFileLocation = '~/.eb.conf'
     
     """
     A wrapper for configuration file parsing
