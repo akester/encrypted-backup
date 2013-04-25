@@ -109,7 +109,7 @@ class EBMain:
             
         outprefix = str(outpath) + '/' + str(prefix)
             
-        subprocess.call(["split", "-bytes=" + str(csize), "-d", "-a " 
+        subprocess.call(["split", "--bytes=" + str(csize), "-d", "-a " 
                          + str(digits), inpath, outprefix])
         return chunks
     
