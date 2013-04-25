@@ -30,3 +30,9 @@ do
 	fi
 	python backup.py --path "$b" --outpath "$ob" --tmppath "$tmppath" --csize 1000000000
 done
+
+# Obviously replace this command with whatever it is you use to sync your data
+s3cmd push --recusrive indir outbucket
+
+# Clean up the outdirs
+rm -r $outpath'/*'
