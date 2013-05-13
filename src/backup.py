@@ -167,8 +167,8 @@ if __name__ == '__main__':
     parser.add_argument('--tmppath', required=True, dest="tmppath", 
                         help="Temporary Output path of files to be copied.")
     parser.add_argument('--csize', required=False, dest="csize", 
-                        default="100000", help="The size, in bytes, of each file"
-                        + " chunk")
+                        default="100000", 
+                        help="The size, in bytes, of each file chunk")
     parser.add_argument('--restore', required=False, dest="rest", 
                         action="store_true", default=False, 
                         help="Restore the files from --path rather than encrypt"
