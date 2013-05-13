@@ -193,86 +193,48 @@ if __name__ == '__main__':
             sys.stderr.write('E: Missing configuration value {0}\n'.format(e))
             exit(errno.EINVAL)
     
-    if args.rest:
-        # Make sure the path exists
-        if not os.path.isdir(args.path):
-            sys.stderr.write('E: Path ({0}) does not exist.\n'
-                             .format(args.path))
-            exit(errno.ENOENT)
-            
-        # Make a tmp file (it could be too large for /tmp to handle and we want the
-        # files in case the system crashes/reboots during our operations)
-        if not os.path.isdir(args.tmppath):
-            try:
-                os.mkdir(args.tmppath)
-            except OSError as e:
-                sys.stdout.write('E: Could not create output directory: {0}\n'
-                                 .format(e))
-                exit(errno.EIO)
-        
-        if not args.noe:
-            sys.stdout.write('Decrypting Files...\n')
-            for root, dirs, files in os.walk(args.path):
-                numFiles = len(files)
-                x = 0
-                for f in files:
-                    x += 1
-                    status = ebe.decryptFile(root + '/' + f, args.tmppath + '/' 
-											+ f + '.part', cfg['main']['passp'])
-                    sys.stdout.write('Decrypted file {0} of {1}\n'
-									.format(x, numFiles))
-                    if status != 'decryption ok':
-                        sys.stderr.write('E: Decryption Error\n')
-                        exit(1)
-        
-        # Start the threading process
-        
-        ebm.assembleChunksCat(args.tmppath + '/*', args.outpath)
-        shutil.rmtree(args.tmppath)
-        
-        exit(0)
-    else:
-        # Make sure the path exists
-        if not os.path.isdir(args.path) and not os.path.isfile(args.path):
-            sys.stderr.write('E: Path ({0}) does not exist.\n'
-                             .format(args.path))
-            exit(errno.ENOENT)
-            
-        # Make a tmp file (it could be too large for /tmp to handle and we want
-        # the files in case the system crashes/reboots during our operations)
-        if not os.path.isdir(args.tmppath):
-            try:
-                os.mkdir(args.tmppath)
-            except OSError as e:
-                sys.stdout.write('E: Could not create output directory: {0}\n'
-                                 .format(e))
-                exit(errno.EIO)
-                        
-        # Archive the files
-        sys.stdout.write('Taring files...\n')
-        ebm.archiveDirectory(args.path, args.tmppath + '/eb-tmp.tar')
-        ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, 
-                           str(time.time()) + '_', args.csize)
-    
-        # Remove the original tmp tar file
-        os.remove(args.tmppath + '/eb-tmp.tar')
-    
-        if not args.noe:
-            # Encrypt the files using the key provided
-            for root, dirs, files in os.walk(args.tmppath):
-                numFiles = len(files)
-                x=0
-                for f in files:
-                    x += 1
-                    status = ebe.encryptFile(root + '/' + f, args.outpath + '/' 
-											+ f + '.pgp', cfg['main']['keyid'], 
-											cfg['main']['passp'])
-                    if status != 'encryption ok':
-                        sys.stderr.write('E: Encryption Error.')
-                        exit(1)
-                    sys.stdout.write('Encrypted file {0} of {1}\n'
-									.format(x, numFiles))
 
-        shutil.rmtree(args.tmppath)
+    # Make sure the path exists
+    if not os.path.isdir(args.path) and not os.path.isfile(args.path):
+        sys.stderr.write('E: Path ({0}) does not exist.\n'
+                         .format(args.path))
+        exit(errno.ENOENT)
             
-        exit(0)
+    # Make a tmp file (it could be too large for /tmp to handle and we want
+    # the files in case the system crashes/reboots during our operations)
+    if not os.path.isdir(args.tmppath):
+        try:
+            os.mkdir(args.tmppath)
+        except OSError as e:
+            sys.stdout.write('E: Could not create output directory: {0}\n'
+                             .format(e))
+            exit(errno.EIO)
+                        
+    # Archive the files
+    sys.stdout.write('Taring files...\n')
+    ebm.archiveDirectory(args.path, args.tmppath + '/eb-tmp.tar')
+    ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, 
+                       str(time.time()) + '_', args.csize)
+    
+    # Remove the original tmp tar file
+    os.remove(args.tmppath + '/eb-tmp.tar')
+    
+    if not args.noe:
+        # Encrypt the files using the key provided
+        for root, dirs, files in os.walk(args.tmppath):
+            numFiles = len(files)
+            x=0
+            for f in files:
+                x += 1
+                status = ebe.encryptFile(root + '/' + f, args.outpath + '/' 
+                                         + f + '.pgp', cfg['main']['keyid'], 
+											cfg['main']['passp'])
+                if status != 'encryption ok':
+                    sys.stderr.write('E: Encryption Error.')
+                    exit(1)
+                sys.stdout.write('Encrypted file {0} of {1}\n'
+                                 .format(x, numFiles))
+
+    shutil.rmtree(args.tmppath)
+            
+    exit(0)
