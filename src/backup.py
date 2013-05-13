@@ -125,12 +125,6 @@ class EBMain:
         output.communicate()
         f.close()
         return output
-    
-    """
-    Reassembles a chunked file
-    
-    This function does not return data in order (a limitation of os.walk)
-    """
  
 """
 Encryption Functions
