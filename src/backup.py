@@ -57,7 +57,10 @@ class EBMain:
     """
     def archiveDirectory(self, directory, outfile):
         tar = tarfile.open(outfile, "w")
-        tar.add(directory)
+        try:
+            tar.add(directory)
+        except WindowsError:
+            pass
         tar.close()
 
     """
@@ -170,19 +173,25 @@ if __name__ == '__main__':
                         action="store_true", default=False, 
                         help="Restore the files from --path rather than encrypt"
                         + " them.")
+	
+    parser.add_argument('--noe', required=False, dest="noe",
+                        action="store_true", default=False,
+                        help="Do not encrypt resulting files")
     args = parser.parse_args()
 
     ebm = EBMain()
-    ebe = EBEncryption(os.path.expanduser('~/.gnupg'))
+
+    if not args.noe:
+        ebe = EBEncryption(os.path.expanduser('~/.gnupg'))
     
-    cfg = ebm.parseConfig()
+        cfg = ebm.parseConfig()
         
-    try:
-        cfg['main']['keyid'] = cfg['main']['keyid']
-        cfg['main']['passp'] = cfg['main']['passp']
-    except KeyError as e:
-        sys.stderr.write('E: Missing configuration value {0}\n'.format(e))
-        exit(errno.EINVAL)
+        try:
+            cfg['main']['keyid'] = cfg['main']['keyid']
+            cfg['main']['passp'] = cfg['main']['passp']
+        except KeyError as e:
+            sys.stderr.write('E: Missing configuration value {0}\n'.format(e))
+            exit(errno.EINVAL)
     
     if args.rest:
         # Make sure the path exists
@@ -201,23 +210,24 @@ if __name__ == '__main__':
                                  .format(e))
                 exit(errno.EIO)
         
-        sys.stdout.write('Decrypting Files...\n')
-        for root, dirs, files in os.walk(args.path):
-            numFiles = len(files)
-            x = 0
-            for f in files:
-                x += 1
-                status = ebe.decryptFile(root + '/' + f, args.tmppath + '/' 
-                                         + f + '.part', cfg['main']['passp'])
-                sys.stdout.write('Decrypted file {0} of {1}\n'
-                                 .format(x, numFiles))
-                if status != 'decryption ok':
-                    sys.stderr.write('E: Decryption Error\n')
-                    exit(1)
+		if not args.noe:
+			sys.stdout.write('Decrypting Files...\n')
+			for root, dirs, files in os.walk(args.path):
+				numFiles = len(files)
+				x = 0
+				for f in files:
+					x += 1
+					status = ebe.decryptFile(root + '/' + f, args.tmppath + '/' 
+											+ f + '.part', cfg['main']['passp'])
+					sys.stdout.write('Decrypted file {0} of {1}\n'
+									.format(x, numFiles))
+					if status != 'decryption ok':
+						sys.stderr.write('E: Decryption Error\n')
+						exit(1)
         
-        # Start the threading process
+			# Start the threading process
         
-        ebm.assembleChunksCat(args.tmppath + '/*', args.outpath)
+		ebm.assembleChunksCat(args.tmppath + '/*', args.outpath)
         shutil.rmtree(args.tmppath)
         
         exit(0)
@@ -247,20 +257,21 @@ if __name__ == '__main__':
         # Remove the original tmp tar file
         os.remove(args.tmppath + '/eb-tmp.tar')
     
-        # Encrypt the files using the key provided
-        for root, dirs, files in os.walk(args.tmppath):
-            numFiles = len(files)
-            x=0
-            for f in files:
-                x += 1
-                status = ebe.encryptFile(root + '/' + f, args.outpath + '/' 
-                                         + f + '.pgp', cfg['main']['keyid'], 
-                                         cfg['main']['passp'])
-                if status != 'encryption ok':
-                    sys.stderr.write('E: Encryption Error.')
-                    exit(1)
-                sys.stdout.write('Encrypted file {0} of {1}\n'
-                                 .format(x, numFiles))
+        if not args.noe:
+			# Encrypt the files using the key provided
+			for root, dirs, files in os.walk(args.tmppath):
+				numFiles = len(files)
+				x=0
+				for f in files:
+					x += 1
+					status = ebe.encryptFile(root + '/' + f, args.outpath + '/' 
+											+ f + '.pgp', cfg['main']['keyid'], 
+											cfg['main']['passp'])
+					if status != 'encryption ok':
+						sys.stderr.write('E: Encryption Error.')
+						exit(1)
+					sys.stdout.write('Encrypted file {0} of {1}\n'
+									.format(x, numFiles))
 
         shutil.rmtree(args.tmppath)
             
