@@ -14,6 +14,7 @@ import gnupg
 import multiprocessing
 import os
 import shutil
+import signal
 import subprocess
 import sys
 import tarfile
@@ -157,6 +158,9 @@ def complete(x):
 
 def archiveDir(a, b):
     ebm.archiveDirectory(a, b)
+    
+def int_worker():
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 if __name__ == '__main__':
         
@@ -225,7 +229,7 @@ if __name__ == '__main__':
     New method of chunking/tarring, does not wait for the file to be fully
     written before it chunks the file
     """
-    tarPool = multiprocessing.Pool()
+    tarPool = multiprocessing.Pool(multiprocessing.cpu_count(), int_worker)
     tarPool.apply_async(archiveDir,
                         [args.path, args.tmppath + '/eb-tmp.tar'],
                         callback=complete)
@@ -237,29 +241,42 @@ if __name__ == '__main__':
     f = open(args.tmppath + '/eb-tmp.tar', 'rw')
     fn = 0
     timepre = str(time.time())
+    tarPool.close()
     
     try:
         while True:
+            size = os.path.getsize(args.tmppath + '/eb-tmp.tar')
+            pct = float(pos) / size * 100
+            sys.stdout.write('\rProcessing Files... ({0} / {1}%)'.format(fn, round(pct)))
+            sys.stdout.flush()
             f.seek(pos)
-            if tarFinished:
-                sys.stdout.write('Tar operation completed.\n')
-            if os.path.getsize(args.tmppath + '/eb-tmp.tar') > cs or tarFinished:
+#            if tarFinished:
+#                sys.stdout.write('Tar operation completed.\n')
+            if os.path.getsize(args.tmppath + '/eb-tmp.tar') >= cs or tarFinished:
                 fn += 1
-                print 'Encrypting file {0} in background.'.format(fn)
                 data = f.read(cs)
-                status = ebe.encryptFile(data, args.outpath + '/' + timepre + '_'
-                                            + str(fn) + '.pgp', 
-                                            cfg['main']['keyid'], cfg['main']['passp'])
-                if status != 'encryption ok':
-                    sys.stderr.write('E: Encryption Error.\n')
-                    exit(1)
+                if args.noe:
+                    of = open(args.outpath + '/' + timepre + '_'
+                                            + str(fn) + '.chk', 'w+')
+                    of.write(data)
+                    of.close()
+                else:
+                    status = ebe.encryptFile(data, args.outpath + '/' + timepre + '_'
+                                             + str(fn) + '.pgp', 
+                                             cfg['main']['keyid'], cfg['main']['passp'])
+                    if status != 'encryption ok':
+                        sys.stderr.write('E: Encryption Error.\n')
+                        exit(1)
                 pos += cs
             if pos >= os.path.getsize(args.tmppath + '/eb-tmp.tar') and tarFinished:
                 break
-        time.sleep(0.1)
+        time.sleep(0.5)
     except KeyboardInterrupt:
         sys.stderr.write('\nCaught SIGINT.  Exiting.\n')
-    
+        sys.stderr.flush()
+        tarPool.terminate()
+        tarPool.join()
+    sys.stdout.write('\nCleaning Up...\n')
     # Remove the original tmp tar file
     os.remove(args.tmppath + '/eb-tmp.tar')
     
