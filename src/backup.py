@@ -11,6 +11,7 @@ Public License version 3 or, at your option, any later version.
 import argparse
 import ConfigParser
 import gnupg
+import multiprocessing
 import os
 import shutil
 import subprocess
@@ -57,10 +58,8 @@ class EBMain:
     """
     def archiveDirectory(self, directory, outfile):
         tar = tarfile.open(outfile, "w")
-        try:
-            tar.add(directory)
-        except WindowsError:
-            pass
+        print 'Archive directory {0}'.format(directory)
+        tar.add(directory)
         tar.close()
 
     """
@@ -133,13 +132,15 @@ class EBEncryption:
     def __init__(self, keyring):
         self.gpg = gnupg.GPG(gnupghome=keyring)
         
-    def encryptFile(self, infile, outfile, key, passp):
-        f = open(infile)
-        crypt = self.gpg.encrypt_file(f, key, output=outfile, passphrase=passp,
+    def encryptFile(self, data, outfile, key, passp):
+        crypt = self.gpg.encrypt(data, key, output=outfile, passphrase=passp,
                                       always_trust=True)
-        f.close()
         
-        return crypt.status
+        if crypt.status != 'encryption ok':
+            print crypt.stderr
+            return crypt.status
+        else:
+            return crypt.status
         
     
     def decryptFile(self, infile, outfile, passp):
@@ -148,8 +149,19 @@ class EBEncryption:
         f.close()
         
         return crypt.status
+    
+
+    
+def complete(x):
+    global tarFinished
+    tarFinished = True
+
+def archiveDir(a, b):
+    ebm.archiveDirectory(a, b)
 
 if __name__ == '__main__':
+        
+    tarFinished = False
     
     ## Argument Parsing
     parser = argparse.ArgumentParser(description="A program to create snapshot" 
@@ -206,28 +218,60 @@ if __name__ == '__main__':
                         
     # Archive the files
     sys.stdout.write('Taring files...\n')
-    ebm.archiveDirectory(args.path, args.tmppath + '/eb-tmp.tar')
-    ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, 
-                       str(time.time()) + '_', args.csize)
+    #ebm.archiveDirectory(args.path, args.tmppath + '/eb-tmp.tar')
+    #ebm.chunkFileSplit(args.tmppath+'/eb-tmp.tar', args.tmppath, 
+    #                   str(time.time()) + '_', args.csize)
+    
+    """
+    New method of chunking/tarring, does not wait for the file to be fully
+    written before it chunks the file
+    """
+    tarPool = multiprocessing.Pool()
+    tarPool.apply_async(archiveDir,
+                        [args.path, args.tmppath + '/eb-tmp.tar'],
+                        callback=complete)
+    
+    pos = 0
+    cs = int(args.csize)
+    f = open(args.tmppath + '/eb-tmp.tar', 'rw')
+    fn = 0
+    timepre = str(time.time())
+    
+    while True:
+        f.seek(pos)
+        if os.path.getsize(args.tmppath + '/eb-tmp.tar') > cs or tarFinished:
+            fn += 1
+            print 'Encrypting file {0} in background.'.format(fn)
+            data = f.read(cs)
+            status = ebe.encryptFile(data, args.outpath + '/' + timepre + '_'
+                                         + str(fn) + '.pgp', 
+                                         cfg['main']['keyid'], cfg['main']['passp'])
+            if status != 'encryption ok':
+                    sys.stderr.write('E: Encryption Error.\n')
+                    exit(1)
+            pos += cs
+        if pos >= os.path.getsize(args.tmppath + '/eb-tmp.tar') and tarFinished:
+            break
+        time.sleep(0.1)
     
     # Remove the original tmp tar file
     os.remove(args.tmppath + '/eb-tmp.tar')
     
-    if not args.noe:
-        # Encrypt the files using the key provided
-        for root, dirs, files in os.walk(args.tmppath):
-            numFiles = len(files)
-            x=0
-            for f in files:
-                x += 1
-                status = ebe.encryptFile(root + '/' + f, args.outpath + '/' 
-                                         + f + '.pgp', cfg['main']['keyid'], 
-											cfg['main']['passp'])
-                if status != 'encryption ok':
-                    sys.stderr.write('E: Encryption Error.')
-                    exit(1)
-                sys.stdout.write('Encrypted file {0} of {1}\n'
-                                 .format(x, numFiles))
+    #if not args.noe:
+    #    # Encrypt the files using the key provided
+    #    for root, dirs, files in os.walk(args.tmppath):
+    #        numFiles = len(files)
+    #        x=0
+    #        for f in files:
+    #            x += 1
+    #            status = ebe.encryptFile(root + '/' + f, args.outpath + '/' 
+    #                                     + f + '.pgp', cfg['main']['keyid'], 
+    #										cfg['main']['passp'])
+    #            if status != 'encryption ok':
+    #                sys.stderr.write('E: Encryption Error.')
+    #                exit(1)
+    #            sys.stdout.write('Encrypted file {0} of {1}\n'
+    #                             .format(x, numFiles))
 
     shutil.rmtree(args.tmppath)
             
