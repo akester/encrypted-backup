@@ -7,11 +7,11 @@
 #########################################
 
 # Set this var to set the input paths you want to backup
-backups=('/home/andrew/Projects/servus' '/home/andrew/Documents')
+backups=('/home/andrew/Documents' '/home/andrew/Downloads' '/home/andrew/Music' '/home/andrew/Projects' '/home/andrew/Pictures')
 
 # Set this var to the output location to store backups (subdirectories will be
 # created automatically)
-outpath='../test/tmp/'
+outpath='/eb/d2/backups/andrew-laptop'
 
 # Set this to the tmp directory you would like to use
 tmppath='/tmp/eb'
@@ -28,11 +28,9 @@ do
 		echo "E: Could not create output dir" 1>&2
 		exit 1
 	fi
-	python backup.py --path "$b" --outpath "$ob" --tmppath "$tmppath" --csize 1000000000
+	# This is the backup call, edit it to your liking.
+	python backup.py --path "$b" --outpath "$ob" --tmppath "$tmppath" --csize 1000000000 --noe
 done
 
-# Obviously replace this command with whatever it is you use to sync your data
-s3cmd push --recusrive indir outbucket
-
 # Clean up the outdirs
-rm -r $outpath'/*'
+rm -r $tmppath'/*'
