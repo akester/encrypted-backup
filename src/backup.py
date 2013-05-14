@@ -58,7 +58,6 @@ class EBMain:
     """
     def archiveDirectory(self, directory, outfile):
         tar = tarfile.open(outfile, "w")
-        print 'Archive directory {0}'.format(directory)
         tar.add(directory)
         tar.close()
 
