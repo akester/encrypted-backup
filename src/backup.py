@@ -231,28 +231,35 @@ if __name__ == '__main__':
                         [args.path, args.tmppath + '/eb-tmp.tar'],
                         callback=complete)
     
+    sys.stdout.write('Waiting for tar process to fill buffer...\n')
+    time.sleep(2)
     pos = 0
     cs = int(args.csize)
     f = open(args.tmppath + '/eb-tmp.tar', 'rw')
     fn = 0
     timepre = str(time.time())
     
-    while True:
-        f.seek(pos)
-        if os.path.getsize(args.tmppath + '/eb-tmp.tar') > cs or tarFinished:
-            fn += 1
-            print 'Encrypting file {0} in background.'.format(fn)
-            data = f.read(cs)
-            status = ebe.encryptFile(data, args.outpath + '/' + timepre + '_'
-                                         + str(fn) + '.pgp', 
-                                         cfg['main']['keyid'], cfg['main']['passp'])
-            if status != 'encryption ok':
+    try:
+        while True:
+            f.seek(pos)
+            if tarFinished:
+                sys.stdout.write('Tar operation completed.\n')
+            if os.path.getsize(args.tmppath + '/eb-tmp.tar') > cs or tarFinished:
+                fn += 1
+                print 'Encrypting file {0} in background.'.format(fn)
+                data = f.read(cs)
+                status = ebe.encryptFile(data, args.outpath + '/' + timepre + '_'
+                                            + str(fn) + '.pgp', 
+                                            cfg['main']['keyid'], cfg['main']['passp'])
+                if status != 'encryption ok':
                     sys.stderr.write('E: Encryption Error.\n')
                     exit(1)
-            pos += cs
-        if pos >= os.path.getsize(args.tmppath + '/eb-tmp.tar') and tarFinished:
-            break
+                pos += cs
+            if pos >= os.path.getsize(args.tmppath + '/eb-tmp.tar') and tarFinished:
+                break
         time.sleep(0.1)
+    except KeyboardInterrupt:
+        sys.stderr.write('\nCaught SIGINT.  Exiting.\n')
     
     # Remove the original tmp tar file
     os.remove(args.tmppath + '/eb-tmp.tar')
